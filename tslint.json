@@ -1,32 +1,25 @@
 {
-    "extends": [
-        "tslint:recommended",
-        "tslint-react",
-        "tslint-eslint-rules",
-        "tslint-config-prettier",
-        "tslint-plugin-prettier"
-    ],
-    "rules": {
-        "interface-name": [
-            true,
-            "never-prefix"
-        ],
-        "no-arg": true,
-        "no-bitwise": true,
-        "no-conditional-assignment": true,
-        "no-consecutive-blank-lines": false,
-        "no-console": {
-            "severity": "warning",
-            "options": [
-                "debug",
-                "info",
-                "log",
-                "time",
-                "timeEnd",
-                "trace"
-            ]
-        },
-        "object-literal-sort-keys": false,
-        "prettier": true
-    }
+	"extends": [
+		"tslint:recommended",
+		"tslint-react",
+		"tslint-eslint-rules",
+		"tslint-config-prettier",
+		"tslint-plugin-prettier"
+	],
+	"rules": {
+		"interface-name": [true, "never-prefix"],
+		"max-classes-per-file": false,
+		"no-arg": true,
+		"no-bitwise": true,
+		"no-conditional-assignment": true,
+		"no-consecutive-blank-lines": false,
+		"no-console": {
+			"severity": "warning",
+			"options": ["debug", "info", "log", "time", "timeEnd", "trace"]
+		},
+		"no-string-literal": false,
+		"object-literal-sort-keys": false,
+		"only-arrow-functions": false,
+		"prettier": true
+	}
 }
