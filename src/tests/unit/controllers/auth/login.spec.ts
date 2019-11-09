@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import { Request, Response } from 'express';
 import sinon from 'sinon';
-import LoginController from '../../../controllers/auth/login';
+import LoginController from '../../../../controllers/auth/login';
 import createMockContext, { MockRequest, MockResponse } from '../../mock';
 
 const context = createMockContext();
 const [Login] = LoginController(context);
 
-describe('testing Login controller', () => {
+describe('Unit Testing Login controller', () => {
 	const req = ({ body: {} } as MockRequest) as Request;
 	const res = (new MockResponse() as unknown) as Response;
 	const resStatusSpy = sinon.spy(res, 'status');
@@ -16,7 +16,7 @@ describe('testing Login controller', () => {
 
 	beforeEach(async () => {
 		req.body = {};
-		db.dropCollection('Users');
+		await db.dropCollection('Users');
 		resStatusSpy.resetHistory();
 		resJsonSpy.resetHistory();
 	});

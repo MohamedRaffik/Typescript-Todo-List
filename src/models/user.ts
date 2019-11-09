@@ -1,4 +1,4 @@
-import { hashSync, compareSync } from 'bcrypt';
+import { compareSync, hashSync } from 'bcrypt';
 import { Db } from 'mongodb';
 
 export interface Todo {
@@ -74,14 +74,14 @@ export default class User {
 		}
 		todo.id = this.lists[todo.list].length;
 		this.lists[todo.list].push(todo);
-		return await this.update({ lists: this.lists });
+		await this.update({ lists: this.lists });
 	}
 
 	public async clearList(list?: string) {
 		list = this.resolvelist(list);
 		this.validOperation(list);
 		this.lists[list].splice(0, this.lists[list].length);
-		return await this.update({ lists: this.lists });
+		await this.update({ lists: this.lists });
 	}
 
 	public async deleteList(list?: string) {
@@ -91,28 +91,28 @@ export default class User {
 			throw Error("Cannot delete 'Master' list");
 		}
 		delete this.lists[list];
-		return await this.update({ lists: this.lists });
+		await this.update({ lists: this.lists });
 	}
 
 	public async deleteTodo(id: number, list?: string) {
 		list = this.resolvelist(list);
 		this.validOperation(list, id);
 		this.lists[list].splice(id, 1);
-		return await this.update({ lists: this.lists });
+		await this.update({ lists: this.lists });
 	}
 
 	public async inCompleteTodo(id: number, list?: string) {
 		list = this.resolvelist(list);
 		this.validOperation(list, id);
 		this.lists[list][id].completed = false;
-		return await this.update({ lists: this.lists });
+		await this.update({ lists: this.lists });
 	}
 
 	public async completeTodo(id: number, list?: string) {
 		list = this.resolvelist(list);
 		this.validOperation(list, id);
 		this.lists[list][id].completed = true;
-		return await this.update({ lists: this.lists });
+		await this.update({ lists: this.lists });
 	}
 
 	private resolvelist(list: string | undefined) {
@@ -132,8 +132,5 @@ export default class User {
 
 	private async update(update: UserUpdate) {
 		await this.db.collection('Users').updateOne({ _id: this.email }, { $set: update });
-		const doc = await this.db.collection('Users').findOne({ _id: this.email });
-		const { _id, ...info } = doc;
-		return new User(this.db, { ...info, email: _id });
 	}
 }

@@ -1,5 +1,5 @@
 import { Db } from 'mongodb';
-import User, { TodoList, UserUpdate } from '../models/user';
+import User, { TodoList, UserUpdate } from '../../models/user';
 
 export class MockResponse {
 	public status(code: number) {

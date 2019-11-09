@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import { Request, Response } from 'express';
 import sinon from 'sinon';
-import RegisterController from '../../../controllers/auth/register';
+import RegisterController from '../../../../controllers/auth/register';
 import createMockContext, { MockRequest, MockResponse } from '../../mock';
 
 const context = createMockContext();
 const [Register] = RegisterController(context);
 
-describe('testing Register controller', () => {
+describe('Unit Testing Register controller', () => {
 	const req = ({ body: {} } as MockRequest) as Request;
 	const res = (new MockResponse() as unknown) as Response;
 	const resStatusSpy = sinon.spy(res, 'status');
