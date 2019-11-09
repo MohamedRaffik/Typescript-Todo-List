@@ -6,7 +6,9 @@
 	"scripts": {
 		"tslint-check": "tslint-config-prettier-check ./tslint.json",
 		"dev:server": "nodemon --watch src --ext .ts --exec 'node --require ts-node/register --require dotenv/config' src/index.ts",
-		"build:server": "tsc",
+		"build": "npm run build:server && npm run build:client",
+		"build:server": "tsc --build tsconfig.json",
+		"build:client": "webpack --mode production",
 		"test": "mocha --exit --require ts-node/register --require dotenv/config --recursive 'src/tests/**/*.spec.ts'",
 		"testfile": "mocha --exit --require ts-node/register --require dotenv/config"
 	},
@@ -70,7 +72,6 @@
 		"express": "^4.17.1",
 		"jsonwebtoken": "^8.5.1",
 		"mongodb": "^3.3.3",
-		"mongoose": "^5.7.7",
 		"react": "^16.11.0",
 		"react-dom": "^16.11.0",
 		"react-router": "^5.1.2",
