@@ -1,0 +1,19 @@
+version: 2
+jobs:
+    build:
+        docker:
+            - image: circleci/node:10.17
+            - image: circleci/mongo:3.6
+        working_directory: ~/TS-TodoList
+        steps:
+            - checkout
+            - restore_cache:
+                  keys:
+                      - v1-dependencies-{{ checksum "package.json "}}
+                      - v1-dependencies-
+            - run: npm install
+            - save_cache:
+                  paths:
+                      - node_modules
+                  key: v1-dependencies-{{ checksum "package.json "}}
+            - run: npm test
