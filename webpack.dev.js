@@ -1,20 +1,19 @@
 const path = require('path');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
+const merge = require('webpack-merge');
+const common = require('./webpack.common');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = {
-	entry: './client/index.ts',
-	output: {
-		path: path.resolve('client/build'),
-		filename: '[name].bundle.js',
-		chunkFilename: '[name].chunk.js'
-	},
+module.exports = merge(common, {
+	mode: 'development',
 	devtool: 'source-map',
 	module: {
 		rules: [
 			{
 				test: /\.tsx?$/,
-				loader: 'ts-loader'
+				loader: 'ts-loader',
+				options: {
+					configFile: path.resolve('client/tsconfig.json')
+				}
 			},
 			{
 				enforce: 'pre',
@@ -44,26 +43,10 @@ module.exports = {
 			}
 		]
 	},
-	plugins: [
-		new MiniCSSExtractPlugin({
-			filename: '[name].css',
-			chunkFilename: '[id].css'
-		}),
-		new HTMLWebpackPlugin({
-			template: './client/public/index.html',
-			filename: 'index.html'
-		})
-	],
-	optimization: {
-		splitChunks: {
-			chunks: 'all'
-		},
-		usedExports: true
-	},
 	devServer: {
 		historyApiFallback: true,
 		proxy: {
 			'/api': { target: 'http://localhost:5000' }
 		}
 	}
-};
+});

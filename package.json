@@ -6,9 +6,10 @@
 	"scripts": {
 		"tslint-check": "tslint-config-prettier-check ./tslint.json",
 		"dev:server": "nodemon --watch src --ext .ts --exec 'node --require ts-node/register --require dotenv/config' src/index.ts",
+		"start": "node dist/index.js",
 		"build": "npm run build:server && npm run build:client",
-		"build:server": "tsc --build tsconfig.json",
-		"build:client": "webpack --mode production",
+		"build:server": "tsc --build tsconfig.prod.json",
+		"build:client": "webpack --config webpack.prod.js",
 		"test": "mocha --exit --require ts-node/register --require dotenv/config --recursive 'src/tests/**/*.spec.ts'",
 		"testfile": "mocha --exit --require ts-node/register --require dotenv/config"
 	},
@@ -62,7 +63,8 @@
 		"url-loader": "^2.2.0",
 		"webpack": "^4.41.2",
 		"webpack-cli": "^3.3.9",
-		"webpack-dev-server": "^3.9.0"
+		"webpack-dev-server": "^3.9.0",
+		"webpack-merge": "^4.2.2"
 	},
 	"dependencies": {
 		"bcrypt": "^3.0.6",
