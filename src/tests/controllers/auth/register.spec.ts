@@ -12,10 +12,11 @@ describe('testing Register controller', () => {
 	const res = (new MockResponse() as unknown) as Response;
 	const resStatusSpy = sinon.spy(res, 'status');
 	const resJsonSpy = sinon.spy(res, 'json');
+	const { db } = context;
 
 	beforeEach(async () => {
 		req.body = {};
-		context.db.dropCollection('Users');
+		db.dropCollection('Users');
 		resStatusSpy.resetHistory();
 		resJsonSpy.resetHistory();
 	});
@@ -39,9 +40,11 @@ describe('testing Register controller', () => {
 		};
 		await Register(req, res);
 		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		expect(resJsonSpy.args[0][0]).to.deep.equal({
-			error: "'email' value must be of type string"
-		});
+		expect(
+			resJsonSpy.calledOnceWithExactly({
+				error: "'email' value must be of type string"
+			})
+		).to.equal(true);
 	});
 
 	it('should return an error if the password length is shorter than 8 characters', async () => {
@@ -55,7 +58,7 @@ describe('testing Register controller', () => {
 
 	it('should return an error if the user already exists in the database', async () => {
 		const email = 'someemail@gmail.com';
-		await context.db.collection('Users').insertOne({ _id: email });
+		await db.collection('Users').insertOne({ _id: email });
 		req.body = {
 			email,
 			username: 'John Doe',
@@ -64,7 +67,11 @@ describe('testing Register controller', () => {
 		await Register(req, res);
 		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
 		// Custom Error from the mock database
-		expect(resJsonSpy.args[0][0]).to.deep.equal({ error: 'Duplicate key' });
+		expect(
+			resJsonSpy.calledOnceWithExactly({
+				error: 'Duplicate key'
+			})
+		).to.equal(true);
 	});
 
 	it('should return a JWT with its expiration date after a successful response', async () => {
@@ -76,9 +83,11 @@ describe('testing Register controller', () => {
 		await Register(req, res);
 		expect(resStatusSpy.calledOnceWith(200)).to.equal(true);
 		expect(resJsonSpy.calledOnce).to.equal(true);
-		expect(resJsonSpy.args[0][0]).to.have.property('token');
-		expect(resJsonSpy.args[0][0]).to.have.property('expires_at');
-		expect(typeof resJsonSpy.args[0][0]['token']).to.equal('string');
-		expect(typeof resJsonSpy.args[0][0]['expires_at']).to.equal('number');
+		expect(resJsonSpy.getCall(0).args[0])
+			.to.have.property('token')
+			.and.to.be.a('string');
+		expect(resJsonSpy.getCall(0).args[0])
+			.to.have.property('expires_at')
+			.and.to.be.a('number');
 	});
 });

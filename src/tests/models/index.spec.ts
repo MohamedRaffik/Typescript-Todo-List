@@ -1,3 +1,4 @@
+import { compareSync } from 'bcrypt';
 import { expect } from 'chai';
 import { Db } from 'mongodb';
 import connect from '../../models/database';
@@ -43,7 +44,7 @@ describe('test User class', () => {
 			if (user) {
 				expect(user.email).to.equal('someemail@gmail.com');
 				expect(user.username).to.equal('JohnnyBoy');
-				expect(user.password).to.equal('password123');
+				expect(compareSync('password123', user.password)).to.equal(true);
 			}
 		});
 

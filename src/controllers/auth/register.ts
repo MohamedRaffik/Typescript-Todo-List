@@ -30,8 +30,7 @@ export default (context: Context) => {
 		const { User, db } = context;
 		const { email, password, username } = req.body as RegisterBody;
 		try {
-			const hash = hashSync(password, 10);
-			const user = await User.create(db, { email, password: hash, username });
+			const user = await User.create(db, { email, password, username });
 			const payload: Payload = {
 				email: user.email,
 				expires_at: Date.now() + Number(process.env.JWT_EXPIRATION)

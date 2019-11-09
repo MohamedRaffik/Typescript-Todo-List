@@ -31,8 +31,8 @@ export default (context: Context) => {
 		if (!user) {
 			return res.status(400).json({ error: 'Account does not exist with this email' });
 		}
-		if (!compareSync(password, user.password)) {
-			return res.status(400).json({ error: 'Incorrect Password' });
+		if (!user.authenticate(password)) {
+			return res.status(401).json({ error: 'Incorrect email or password' });
 		}
 		const payload: Payload = {
 			email: user.email,

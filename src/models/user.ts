@@ -1,3 +1,4 @@
+import { hashSync, compareSync } from 'bcrypt';
 import { Db } from 'mongodb';
 
 export interface Todo {
@@ -40,6 +41,7 @@ export default class User {
 		if (info.password.length <= 8) {
 			throw Error('Password length is too short, must be greater than 8 characters');
 		}
+		info.password = hashSync(info.password, 10);
 		const user = new User(db, info);
 		const { email, ...userInfo } = user;
 		delete userInfo.db;
@@ -58,6 +60,10 @@ export default class User {
 		this.password = info.password;
 		this.lists = info.lists || { Master: [] };
 		this.db = db;
+	}
+
+	public authenticate(password: string) {
+		return compareSync(password, this.password);
 	}
 
 	public async addTodo(todo: Todo) {
