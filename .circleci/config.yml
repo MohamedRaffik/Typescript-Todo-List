@@ -23,22 +23,22 @@ jobs:
                       npm test
     deploy:
         docker:
-          - image: buildpack-deps:trusty
+            - image: buildpack-deps:trusty
         steps:
             - checkout
             - run:
               name: Deploy to Heroku
               command: |
-                git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+                  git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
 
 workflows:
-  version: 2.1
-  heroku-deploy:
-    jobs:
-      - build
-      - deploy
-        requires:
-          - build
-        filters:
-          branches:
-            only: master
+    version: 2.1
+    heroku-deploy:
+        jobs:
+            - build
+            - deploy:
+              requires:
+                  - build
+              filters:
+                  branches:
+                      only: master
