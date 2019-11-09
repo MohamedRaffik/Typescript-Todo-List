@@ -7,8 +7,8 @@
 		"tslint-check": "tslint-config-prettier-check ./tslint.json",
 		"dev:server": "nodemon --watch src --ext .ts --exec 'node --require ts-node/register --require dotenv/config' src/index.ts",
 		"build:server": "tsc",
-		"test": "mocha --require ts-node/register --require dotenv/config --recursive 'src/tests/**/*.spec.ts'",
-		"testfile": "mocha --require ts-node/register --require dotenv/config"
+		"test": "mocha --exit --require ts-node/register --require dotenv/config --recursive 'src/tests/**/*.spec.ts'",
+		"testfile": "mocha --exit --require ts-node/register --require dotenv/config"
 	},
 	"author": "",
 	"license": "ISC",
