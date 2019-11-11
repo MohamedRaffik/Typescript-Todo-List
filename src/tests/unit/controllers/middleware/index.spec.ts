@@ -8,7 +8,7 @@ import createMockContext, { MockResponse } from '../../mock';
 const context = createMockContext();
 const { isAuthenticated } = middleware(context);
 
-describe('Unit test middleware functions', () => {
+describe('Unit Testing middleware functions', () => {
 	const req = ({ body: {}, headers: {} } as unknown) as Request;
 	const res = (new MockResponse() as unknown) as Response;
 	const resStatusSpy = sinon.spy(res, 'status');

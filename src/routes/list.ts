@@ -5,7 +5,8 @@ import { List } from '../controllers';
 export default (context: Context) => {
 	const ListRouter = Router();
 
-	ListRouter.post('/add', List.addTodo(context));
+	ListRouter.post('/:list/add', List.addTodo(context));
+	ListRouter.delete('/:list/update', List.clearList(context));
 
 	return ListRouter;
 };

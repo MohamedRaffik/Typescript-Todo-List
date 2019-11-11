@@ -1,5 +1,7 @@
 import addTodo from './addTodo';
+import clearList from './clearList';
 
 export default {
-	addTodo
+	addTodo,
+	clearList
 };

@@ -7,7 +7,7 @@ import createMockContext, { MockResponse } from '../../mock';
 const context = createMockContext();
 const [isAuthenticated, addTodo] = addTodoController(context);
 
-describe('Unit testing addTodo controller', () => {
+describe('Unit Testing addTodo controller', () => {
 	const req = ({ body: {} } as unknown) as Request;
 	const res = (new MockResponse() as unknown) as Response;
 	const resStatusSpy = sinon.spy(res, 'status');
@@ -32,6 +32,7 @@ describe('Unit testing addTodo controller', () => {
 
 	it('should return an error response if the fields are invalid', async () => {
 		req.body = { title: 'My First Item' };
+		req.params = { list: 'Master' };
 		await addTodo(req, res, next);
 
 		req.body = { ...req.body, notes: [10, 'note1'] };

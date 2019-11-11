@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { validateArray, validateFields } from '../../../../controllers/utils';
 
-describe('Unit Test utils functions', () => {
+describe('Unit Testing utils functions', () => {
 	describe('testing validateFields', () => {
 		const obj = {
 			firstName: 'John',

@@ -20,20 +20,12 @@ describe('Unit Testing User Class', () => {
 	});
 
 	describe('testing addTodo', async () => {
-		it('should add a todo item to the master todo list if there is no list defined', async () => {
-			expect(user.lists['Master'].length).to.equal(0);
-			await user.addTodo(todo);
-			expect(user.lists['Master'][0]).to.deep.equal({
-				...todo,
-				completed: false
-			});
-		});
-
 		it('should add a todo item to the list and create that list if it does not exist', async () => {
 			expect(user.lists).to.not.have.property('School');
-			await user.addTodo({ ...todo }, 'School');
+			await user.addTodo('School', { ...todo });
 			expect(user.lists['School'][0]).to.deep.equal({
 				...todo,
+				id: 0,
 				completed: false
 			});
 		});
@@ -41,16 +33,17 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing completeTodo', async () => {
 		it('should mark a todo item as completed in the list', async () => {
-			await user.completeTodo(0, 'School');
+			await user.completeTodo('School', 0);
 			expect(user.lists['School'][0]).to.deep.equal({
 				...todo,
+				id: 0,
 				completed: true
 			});
 		});
 
 		it('should throw an error if the list does not exist', async () => {
 			try {
-				await user.completeTodo(0, 'Food');
+				await user.completeTodo('Food', 0);
 				throw Error('Item added to non existent list');
 			} catch (err) {
 				expect(err.message).to.equal("'Food' list does not exist");
@@ -60,16 +53,17 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing inCompleteTodo', () => {
 		it('should mark a todo item as incomplete in the list', async () => {
-			await user.inCompleteTodo(0, 'School');
+			await user.inCompleteTodo('School', 0);
 			expect(user.lists['School'][0]).to.deep.equal({
 				...todo,
+				id: 0,
 				completed: false
 			});
 		});
 
 		it('should throw an error if the todo item does not exist', async () => {
 			try {
-				await user.inCompleteTodo(100, 'School');
+				await user.inCompleteTodo('School', 100);
 				throw Error('Non existent Todo item marked as incomplete');
 			} catch (err) {
 				expect(err.message).to.equal("Item does not exist in 'School' list");
@@ -80,13 +74,13 @@ describe('Unit Testing User Class', () => {
 	describe('testing deleteTodo', () => {
 		it('should remove a todo item from the list', async () => {
 			expect(user.lists['School'].length).to.equal(1);
-			await user.deleteTodo(0, 'School');
+			await user.deleteTodo('School', 0);
 			expect(user.lists['School']).to.deep.equal([]);
 		});
 
 		it('should throw an error if the todo item does not exist', async () => {
 			try {
-				await user.deleteTodo(100);
+				await user.deleteTodo('Master', 100);
 				throw Error('Non existent Todo item was deleted');
 			} catch (err) {
 				expect(err.message).to.equal("Item does not exist in 'Master' list");
@@ -114,8 +108,9 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing clearList', () => {
 		it('should clear the list of all todo items', async () => {
+			user.addTodo('Master', { title: 'Item', notes: [], created: Date.now() });
 			expect(user.lists['Master'].length).to.equal(1);
-			await user.clearList();
+			await user.clearList('Master');
 			expect(user.lists['Master'].length).to.equal(0);
 		});
 

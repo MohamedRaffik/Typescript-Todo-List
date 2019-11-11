@@ -65,8 +65,7 @@ export default class User {
 		return compareSync(password, this.password);
 	}
 
-	public async addTodo(todo: Todo, list?: string) {
-		list = this.resolvelist(list);
+	public async addTodo(list: string, todo: Todo) {
 		todo.completed = false;
 		if (!(list in this.lists)) {
 			this.lists[list] = [];
@@ -76,15 +75,13 @@ export default class User {
 		await this.update({ lists: this.lists });
 	}
 
-	public async clearList(list?: string) {
-		list = this.resolvelist(list);
+	public async clearList(list: string) {
 		this.validOperation(list);
 		this.lists[list].splice(0, this.lists[list].length);
 		await this.update({ lists: this.lists });
 	}
 
-	public async deleteList(list?: string) {
-		list = this.resolvelist(list);
+	public async deleteList(list: string) {
 		this.validOperation(list);
 		if (list === 'Master') {
 			throw Error("Cannot delete 'Master' list");
@@ -93,29 +90,22 @@ export default class User {
 		await this.update({ lists: this.lists });
 	}
 
-	public async deleteTodo(id: number, list?: string) {
-		list = this.resolvelist(list);
+	public async deleteTodo(list: string, id: number) {
 		this.validOperation(list, id);
 		this.lists[list].splice(id, 1);
 		await this.update({ lists: this.lists });
 	}
 
-	public async inCompleteTodo(id: number, list?: string) {
-		list = this.resolvelist(list);
+	public async inCompleteTodo(list: string, id: number) {
 		this.validOperation(list, id);
 		this.lists[list][id].completed = false;
 		await this.update({ lists: this.lists });
 	}
 
-	public async completeTodo(id: number, list?: string) {
-		list = this.resolvelist(list);
+	public async completeTodo(list: string, id: number) {
 		this.validOperation(list, id);
 		this.lists[list][id].completed = true;
 		await this.update({ lists: this.lists });
-	}
-
-	private resolvelist(list: string | undefined) {
-		return list === undefined ? 'Master' : list;
 	}
 
 	private validOperation(list: string, id?: number) {

@@ -6,7 +6,7 @@ import API from './routes';
 
 const PORT = process.env.PORT || 5000;
 
-const startServer = async () => {
+const StartServer = async () => {
 	const app = express();
 	const context = await createContext();
 
@@ -21,11 +21,11 @@ const startServer = async () => {
 	return app;
 };
 
-startServer().then(app =>
+StartServer().then(app =>
 	app.listen(PORT, () => {
 		// tslint:disable-next-line: no-console
 		console.log(`Listening on Port ${PORT}`);
 	})
 );
 
-export default startServer;
+export default StartServer;
