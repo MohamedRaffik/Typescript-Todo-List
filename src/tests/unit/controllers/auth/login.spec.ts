@@ -2,13 +2,13 @@ import { expect } from 'chai';
 import { Request, Response } from 'express';
 import sinon from 'sinon';
 import LoginController from '../../../../controllers/auth/login';
-import createMockContext, { MockRequest, MockResponse } from '../../mock';
+import createMockContext, { MockResponse } from '../../mock';
 
 const context = createMockContext();
 const [Login] = LoginController(context);
 
 describe('Unit Testing Login controller', () => {
-	const req = ({ body: {} } as MockRequest) as Request;
+	const req = ({ body: {} } as unknown) as Request;
 	const res = (new MockResponse() as unknown) as Response;
 	const resStatusSpy = sinon.spy(res, 'status');
 	const resJsonSpy = sinon.spy(res, 'json');

@@ -4,7 +4,6 @@ import { Db } from 'mongodb';
 export interface Todo {
 	id?: number;
 	title: string;
-	list?: string;
 	notes: string[];
 	created: number;
 	completed?: boolean;
@@ -66,14 +65,14 @@ export default class User {
 		return compareSync(password, this.password);
 	}
 
-	public async addTodo(todo: Todo) {
-		todo.list = this.resolvelist(todo.list);
+	public async addTodo(todo: Todo, list?: string) {
+		list = this.resolvelist(list);
 		todo.completed = false;
-		if (!(todo.list in this.lists)) {
-			this.lists[todo.list] = [];
+		if (!(list in this.lists)) {
+			this.lists[list] = [];
 		}
-		todo.id = this.lists[todo.list].length;
-		this.lists[todo.list].push(todo);
+		todo.id = this.lists[list].length;
+		this.lists[list].push(todo);
 		await this.update({ lists: this.lists });
 	}
 

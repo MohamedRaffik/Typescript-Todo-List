@@ -4,10 +4,10 @@ import express, { Request, Response } from 'express';
 import createContext from './context';
 import API from './routes';
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 
-(async () => {
+const startServer = async () => {
+	const app = express();
 	const context = await createContext();
 
 	app.use(compression());
@@ -18,9 +18,14 @@ const PORT = process.env.PORT || 5000;
 	app.use('/', (req: Request, res: Response) => {
 		res.status(200).json({ message: 'HI' });
 	});
+	return app;
+};
 
+startServer().then(app =>
 	app.listen(PORT, () => {
 		// tslint:disable-next-line: no-console
 		console.log(`Listening on Port ${PORT}`);
-	});
-})();
+	})
+);
+
+export default startServer;

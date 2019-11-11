@@ -1,4 +1,3 @@
-import { compareSync } from 'bcrypt';
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { Payload } from '..';
@@ -39,8 +38,8 @@ export default (context: Context) => {
 			expires_at: Date.now() + Number(process.env.JWT_EXPIRATION)
 		};
 		const token = jwt.sign(payload, String(process.env.SECRET_KEY));
-		const jsonResponse: LoginResponse = { token, expires_at: payload.expires_at };
-		return res.status(200).json(jsonResponse);
+		const response: LoginResponse = { token, expires_at: payload.expires_at };
+		return res.status(200).json(response);
 	};
 	return [Login];
 };

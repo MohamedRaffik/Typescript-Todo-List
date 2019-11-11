@@ -25,17 +25,15 @@ describe('Unit Testing User Class', () => {
 			await user.addTodo(todo);
 			expect(user.lists['Master'][0]).to.deep.equal({
 				...todo,
-				list: 'Master',
 				completed: false
 			});
 		});
 
 		it('should add a todo item to the list and create that list if it does not exist', async () => {
 			expect(user.lists).to.not.have.property('School');
-			await user.addTodo({ ...todo, list: 'School' });
+			await user.addTodo({ ...todo }, 'School');
 			expect(user.lists['School'][0]).to.deep.equal({
 				...todo,
-				list: 'School',
 				completed: false
 			});
 		});
@@ -46,7 +44,6 @@ describe('Unit Testing User Class', () => {
 			await user.completeTodo(0, 'School');
 			expect(user.lists['School'][0]).to.deep.equal({
 				...todo,
-				list: 'School',
 				completed: true
 			});
 		});
@@ -66,7 +63,6 @@ describe('Unit Testing User Class', () => {
 			await user.inCompleteTodo(0, 'School');
 			expect(user.lists['School'][0]).to.deep.equal({
 				...todo,
-				list: 'School',
 				completed: false
 			});
 		});

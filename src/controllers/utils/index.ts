@@ -1,15 +1,3 @@
-/**
- * Checks if an object has specific fields defined with correct values.
- * If the field is an object call validateFields for the inner object.
- *
- * @param object Object to inspect
- * @param fields Object of fields that describes the field the object must have
- * @param field.type The typeof result of the value of the field
- * @param field.enum A possible value the field must have
- * @param field.default A default value to set if the field is not defined or has an incorrect value.
- * If you wish to have undefined or null value for the field set this to undefined or null
- * @returns An empty string if there is no error or a string with an error message
- */
 export const validateFields = (
 	object: object,
 	fields: {
@@ -20,7 +8,6 @@ export const validateFields = (
 	Object.entries(fields).forEach(value => {
 		const [field, info] = value;
 		const errorLength = error.length;
-		Object.freeze(info);
 		if (!(field in object)) {
 			error.push(`'${field}' is not specified`);
 		} else if (object[field] === null || object[field] === undefined) {
@@ -46,5 +33,39 @@ export const validateFields = (
 			}
 		}
 	});
+	return error.join(', ');
+};
+
+export const validateArray = (
+	array: any[],
+	info: { type: 'string' | 'number' | 'boolean'; enum?: Set<any>; removeDuplicates?: boolean }
+) => {
+	const error: string[] = [];
+	array.forEach(value => {
+		if (typeof value !== info.type) {
+			if (error.length === 0) {
+				error.push(`Values of '[ ${array.join(', ')} ]' must be of type '${info.type}'`);
+			}
+		}
+		if (info.enum) {
+			if (info.enum.has(value)) {
+				info.enum.delete(value);
+			}
+		}
+	});
+	if (info.enum) {
+		if (info.enum.size) {
+			error.push(
+				`'[ ${array.join(', ')} ]' must include these values '[ ${Array.from(
+					info.enum
+				).join(', ')} ]'`
+			);
+		}
+	}
+	if (info.removeDuplicates) {
+		const newArr = new Set(array);
+		array.splice(0, array.length);
+		array.push(...Array.from(newArr));
+	}
 	return error.join(', ');
 };

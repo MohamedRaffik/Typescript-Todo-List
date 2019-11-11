@@ -10,13 +10,6 @@ export class MockResponse {
 	}
 }
 
-export class MockRequest {
-	public body: object;
-	constructor() {
-		this.body = {};
-	}
-}
-
 class Database {
 	public db: object;
 
@@ -44,7 +37,6 @@ class Database {
 					throw Error('Duplicate key');
 				}
 				this.db[name][insert._id] = insert;
-				return this.db[name][insert._id];
 			},
 			updateOne: async (query: { _id: string }, update: { $set: UserUpdate }) => {
 				Object.entries(update.$set).forEach(pair => {

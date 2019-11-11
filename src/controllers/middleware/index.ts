@@ -14,19 +14,20 @@ export default (context: Context) => {
 			if (AuthType !== 'Bearer') {
 				return res.status(401).json({ error: 'Incorrect Token Type, must be Bearer' });
 			}
-			const payload = jwt.verify(token, String(process.env.SECRET_KEY)) as Payload;
-			if (!payload) {
+			try {
+				const payload = jwt.verify(token, String(process.env.SECRET_KEY)) as Payload;
+				if (payload.expires_at < Date.now()) {
+					return res.status(401).json({ error: 'JWT Token is expired' });
+				}
+				const user = await User.get(db, payload.email);
+				if (!user) {
+					return res.status(401).json({ error: 'Account not Found' });
+				}
+				req.user = user;
+				next();
+			} catch (err) {
 				return res.status(401).json({ error: 'JWT Token is invalid' });
 			}
-			if (payload.expires_at < Date.now()) {
-				return res.status(401).json({ error: 'JWT Token is expired' });
-			}
-			const user = await User.get(db, payload.email);
-			if (!user) {
-				return res.status(401).json({ error: 'Account not Found' });
-			}
-			req.user = user;
-			next();
 		}
 	};
 };
