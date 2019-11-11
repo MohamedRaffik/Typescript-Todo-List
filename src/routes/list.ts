@@ -7,6 +7,7 @@ export default (context: Context) => {
 
 	ListRouter.post('/:list/add', List.addTodo(context));
 	ListRouter.delete('/:list/update', List.clearList(context));
+	ListRouter.delete('/:list/delete', List.deleteList(context));
 
 	return ListRouter;
 };
