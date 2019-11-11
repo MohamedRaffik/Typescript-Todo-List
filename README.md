@@ -7,7 +7,7 @@
 
 -   [x] clearList - delete /:list/update
 -   [x] deleteList - delete /:list/delete
--   [ ] deleteTodo - delete /:list/delete/:id
+-   [x] deleteTodo - delete /:list/delete/:id
 
 -   [ ] Update Todo - put /:list/update/:id
         inCompleteTodo

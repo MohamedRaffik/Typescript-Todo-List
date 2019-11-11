@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import { Request, Response } from 'express';
 import sinon from 'sinon';
-import clearListController from '../../../../controllers/list/clearList';
+import getListsController from '../../../../controllers/list/getLists';
 import createMockContext, { MockResponse } from '../../mock';
 
 const context = createMockContext();
-const [isAuthenticated, clearList] = clearListController(context);
+const [isAuthenticated, getLists] = getListsController(context);
 
-describe('Unit Testing clearList controller', () => {
+describe('Unit Testing getLists controller', () => {
 	const req = ({ body: {} } as unknown) as Request;
 	const res = (new MockResponse() as unknown) as Response;
 	const resStatusSpy = sinon.spy(res, 'status');
@@ -30,25 +30,12 @@ describe('Unit Testing clearList controller', () => {
 		resJsonSpy.resetHistory();
 	});
 
-	it('should throw in error if the list does not exist', async () => {
-		req.params = { list: 'School' };
-		await clearList(req, res, next);
-		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: "'School' list does not exist"
-			})
-		).to.equal(true);
-	});
-
-	it('should return the updated list with a successful response', async () => {
-		req.params = { list: 'Master' };
-		await clearList(req, res, next);
+	it('should always return with a succesful response with a users todo list', async () => {
+		await getLists(req, res, next);
 		expect(resStatusSpy.calledOnceWith(200)).to.equal(true);
 		expect(
 			resJsonSpy.calledOnceWithExactly({
-				list: 'Master',
-				items: []
+				Master: []
 			})
 		).to.equal(true);
 	});

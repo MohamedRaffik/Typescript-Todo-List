@@ -5,15 +5,15 @@ import middleware from '../middleware';
 
 export default (context: Context) => {
 	const { isAuthenticated } = middleware(context);
-	const deleteList = async (req: Request, res: Response) => {
-		const { list } = req.params;
+	const deleteTodo = async (req: Request, res: Response) => {
+		const { list, id } = req.params;
 		const user = req.user as User;
 		try {
-			await user.deleteList(list);
+			await user.deleteTodo(list, Number(id));
 			return res.status(200);
 		} catch (err) {
 			return res.status(400).json({ error: err.message });
 		}
 	};
-	return [isAuthenticated, deleteList];
+	return [isAuthenticated, deleteTodo];
 };

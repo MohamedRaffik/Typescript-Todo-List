@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import { Request, Response } from 'express';
 import sinon from 'sinon';
-import deleteListController from '../../../../controllers/list/deleteList';
+import deleteTodoController from '../../../../controllers/list/deleteTodo';
 import createMockContext, { MockResponse } from '../../mock';
 
 const context = createMockContext();
-const [isAuthenticated, deleteList] = deleteListController(context);
+const [isAuthenticated, deleteTodo] = deleteTodoController(context);
 
-describe('Unit Testing deleteList controller', () => {
+describe('Unit Testing deleteTodo controller', () => {
 	const req = ({ body: {} } as unknown) as Request;
 	const res = (new MockResponse() as unknown) as Response;
 	const resStatusSpy = sinon.spy(res, 'status');
@@ -30,9 +30,9 @@ describe('Unit Testing deleteList controller', () => {
 		resJsonSpy.resetHistory();
 	});
 
-	it('should return an error if the list does not exist', async () => {
-		req.params = { list: 'School' };
-		await deleteList(req, res, next);
+	it('should return an error response if the list does not exist', async () => {
+		req.params = { list: 'School', id: String(100) };
+		await deleteTodo(req, res, next);
 		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
 		expect(
 			resJsonSpy.calledOnceWithExactly({
@@ -41,23 +41,23 @@ describe('Unit Testing deleteList controller', () => {
 		).to.equal(true);
 	});
 
-	it('should return an error if the Master is attempted to be deleted', async () => {
-		req.params = { list: 'Master' };
-		await deleteList(req, res, next);
+	it('should return an error message if the item does not exist', async () => {
+		req.params = { list: 'Master', id: String(100) };
+		await deleteTodo(req, res, next);
 		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
 		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: "Cannot delete 'Master' list"
+			resJsonSpy.alwaysCalledWithExactly({
+				error: "Item does not exist in 'Master' list"
 			})
 		).to.equal(true);
 	});
 
-	it('should return a successful response after successfully deleting the list', async () => {
+	it('should return a successful response if the item was successfully deleted', async () => {
+		req.params = { list: 'Master', id: String(0) };
 		if (req.user) {
-			await req.user.addTodo('School', { title: 'A', notes: [], created: Date.now() });
+			await req.user.addTodo('Master', { title: 'A', notes: [], created: Date.now() });
 		}
-		req.params = { list: 'School' };
-		await deleteList(req, res, next);
+		await deleteTodo(req, res, next);
 		expect(resStatusSpy.calledOnceWith(200)).to.equal(true);
 		expect(resJsonSpy.notCalled).to.equal(true);
 	});

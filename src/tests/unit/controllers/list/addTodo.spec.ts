@@ -40,7 +40,6 @@ describe('Unit Testing addTodo controller', () => {
 
 		expect(resStatusSpy.calledTwice).to.equal(true);
 		expect(resStatusSpy.alwaysCalledWith(400)).to.equal(true);
-		expect(next.notCalled).to.equal(true);
 		expect(resJsonSpy.calledTwice).to.equal(true);
 		expect(resJsonSpy.getCall(0).args[0]).to.deep.equal({
 			error: "'notes' is not specified"
@@ -72,6 +71,5 @@ describe('Unit Testing addTodo controller', () => {
 				]
 			})
 		).to.equal(true);
-		expect(next.notCalled).to.equal(true);
 	});
 });

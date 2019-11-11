@@ -21,7 +21,7 @@ export default (context: Context) => {
 	const { isAuthenticated } = middleware(context);
 	const addTodo = async (req: Request, res: Response) => {
 		const body = req.body as AddTodoBody;
-		const list = req.params['list'];
+		const { list } = req.params;
 		let error = validateFields(body, {
 			list: { type: 'string', default: 'Master' },
 			notes: {},
