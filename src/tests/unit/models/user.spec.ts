@@ -31,9 +31,18 @@ describe('Unit Testing User Class', () => {
 		});
 	});
 
-	describe('testing completeTodo', async () => {
+	describe('testing updateTodo', async () => {
 		it('should mark a todo item as completed in the list', async () => {
-			await user.completeTodo('School', 0);
+			await user.updateTodo('School', 0, { completed: true });
+			expect(user.lists['School'][0]).to.deep.equal({
+				...todo,
+				id: 0,
+				completed: true
+			});
+		});
+
+		it('should not update if the values of the update object are undefined', async () => {
+			await user.updateTodo('School', 0, { completed: undefined, notes: undefined });
 			expect(user.lists['School'][0]).to.deep.equal({
 				...todo,
 				id: 0,
@@ -43,30 +52,10 @@ describe('Unit Testing User Class', () => {
 
 		it('should throw an error if the list does not exist', async () => {
 			try {
-				await user.completeTodo('Food', 0);
+				await user.updateTodo('Food', 0, { completed: true, title: 'Updated Item' });
 				throw Error('Item added to non existent list');
 			} catch (err) {
 				expect(err.message).to.equal("'Food' list does not exist");
-			}
-		});
-	});
-
-	describe('testing inCompleteTodo', () => {
-		it('should mark a todo item as incomplete in the list', async () => {
-			await user.inCompleteTodo('School', 0);
-			expect(user.lists['School'][0]).to.deep.equal({
-				...todo,
-				id: 0,
-				completed: false
-			});
-		});
-
-		it('should throw an error if the todo item does not exist', async () => {
-			try {
-				await user.inCompleteTodo('School', 100);
-				throw Error('Non existent Todo item marked as incomplete');
-			} catch (err) {
-				expect(err.message).to.equal("Item does not exist in 'School' list");
 			}
 		});
 	});

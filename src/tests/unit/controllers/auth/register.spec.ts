@@ -42,7 +42,7 @@ describe('Unit Testing Register controller', () => {
 		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
 		expect(
 			resJsonSpy.calledOnceWithExactly({
-				error: "'email' value must be of type string"
+				error: "'email' value must be of type 'string'"
 			})
 		).to.equal(true);
 	});

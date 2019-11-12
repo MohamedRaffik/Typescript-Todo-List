@@ -10,6 +10,7 @@ export default (context: Context) => {
 	ListRouter.put('/:list/update', List.clearList(context));
 	ListRouter.delete('/:list/delete', List.deleteList(context));
 	ListRouter.delete('/:list/:id', List.deleteTodo(context));
+	ListRouter.put('/:list/:id', List.updateTodo(context));
 
 	return ListRouter;
 };

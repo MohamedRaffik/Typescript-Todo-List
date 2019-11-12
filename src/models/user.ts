@@ -27,6 +27,12 @@ export interface UserUpdate {
 	lists?: TodoList;
 }
 
+export interface UpdateTodo {
+	title?: string;
+	notes?: string[];
+	completed?: boolean;
+}
+
 export default class User {
 	public static get = async (db: Db, email: string) => {
 		const doc = await db.collection('Users').findOne({ _id: email });
@@ -96,15 +102,17 @@ export default class User {
 		await this.update({ lists: this.lists });
 	}
 
-	public async inCompleteTodo(list: string, id: number) {
+	public async updateTodo(list: string, id: number, update: UpdateTodo) {
 		this.validOperation(list, id);
-		this.lists[list][id].completed = false;
-		await this.update({ lists: this.lists });
-	}
-
-	public async completeTodo(list: string, id: number) {
-		this.validOperation(list, id);
-		this.lists[list][id].completed = true;
+		const keys = Object.keys(update);
+		if (keys.length === 0) {
+			return;
+		}
+		Object.keys(update).forEach(key => {
+			if (update[key] !== undefined) {
+				this.lists[list][id][key] = update[key];
+			}
+		});
 		await this.update({ lists: this.lists });
 	}
 

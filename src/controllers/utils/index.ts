@@ -15,7 +15,7 @@ export const validateFields = (
 		} else {
 			if (info.type) {
 				if (typeof object[field] !== info.type) {
-					error.push(`'${field}' value must be of type ${info.type}`);
+					error.push(`'${field}' value must be of type '${info.type}'`);
 				}
 			}
 			if (info.enum) {

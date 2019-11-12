@@ -38,7 +38,7 @@ describe('Unit Testing Login controller', () => {
 			error: "'email' is not specified, 'password' is not specified"
 		});
 		expect(resJsonSpy.getCall(1).args[0]).to.deep.equal({
-			error: "'email' value must be of type string"
+			error: "'email' value must be of type 'string'"
 		});
 	});
 

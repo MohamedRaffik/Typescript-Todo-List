@@ -59,16 +59,11 @@ describe('Unit Testing addTodo controller', () => {
 		expect(resStatusSpy.calledOnceWith(200)).to.equal(true);
 		expect(
 			resJsonSpy.calledOnceWithExactly({
-				list: 'Master',
-				items: [
-					{
-						id: 0,
-						title: req.body.title,
-						notes: req.body.notes,
-						created: req.body.created,
-						completed: false
-					}
-				]
+				id: 0,
+				title: req.body.title,
+				notes: req.body.notes,
+				created: req.body.created,
+				completed: false
 			})
 		).to.equal(true);
 	});

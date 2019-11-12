@@ -5,16 +5,10 @@ import middleware from '../middleware';
 import { validateArray, validateFields } from '../utils';
 
 interface AddTodoBody {
-	list: string;
 	title: string;
 	notes: string[];
 	created: number;
 	completed: boolean;
-}
-
-interface AddTodoResponse {
-	list: string;
-	items: Todo[];
 }
 
 export default (context: Context) => {
@@ -42,8 +36,8 @@ export default (context: Context) => {
 			created: body.created,
 			completed: body.completed
 		};
-		await user.addTodo(body.list, newTodo);
-		const response: AddTodoResponse = { list, items: user.lists[list] };
+		await user.addTodo(list, newTodo);
+		const response: Todo = { ...user.lists[list][user.lists[list].length - 1] };
 		return res.status(200).json(response);
 	};
 	return [isAuthenticated, addTodo];

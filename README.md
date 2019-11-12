@@ -6,14 +6,15 @@
 -   [x] addTodo - post /:list/add
 
 -   [x] clearList - delete /:list/update
+-   [ ] renameList - put /:list/rename
 -   [x] deleteList - delete /:list/delete
 -   [x] deleteTodo - delete /:list/delete/:id
 
--   [ ] Update Todo - put /:list/update/:id
-        inCompleteTodo
-        completeTodo
+-   [x] Update Todo - put /:list/update/:id
 
--   [ ] Get Lists - get /list
+-   [x] Get Lists - get /list
         getLists
 
-6 methods
+Add Web Push notifications for app
+
+-   Use web-push with bull on a worker queue to implement cron jobs to send web push notifications
