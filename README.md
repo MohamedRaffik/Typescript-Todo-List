@@ -4,16 +4,20 @@
 -   [x] register - post /auth/register
 
 -   [x] addTodo - post /:list/add
+-   [ ] createList - post /:list
 
 -   [x] clearList - delete /:list/update
--   [ ] renameList - put /:list/rename
 -   [x] deleteList - delete /:list/delete
 -   [x] deleteTodo - delete /:list/delete/:id
 
+-   [ ] renameList - put /:list/rename
+-   [ ] Move Todo - put /:list/move/:id/
 -   [x] Update Todo - put /:list/update/:id
 
 -   [x] Get Lists - get /list
         getLists
+
+-   [x] Move Todo
 
 Add Web Push notifications for app
 
