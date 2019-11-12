@@ -75,7 +75,7 @@ describe('Integration Testing User class', () => {
 			expect(user).to.not.equal(undefined);
 			if (user) {
 				expect(user.lists.Master.length).to.equal(0);
-				user.addTodo('Master', todo);
+				await user.addTodo('Master', todo);
 				const updatedUser = await User.get(db, info.email);
 				expect(updatedUser).to.not.equal(undefined);
 				if (updatedUser) {
