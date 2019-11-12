@@ -7,21 +7,26 @@
 
 -   /list
 
-    -   [x] addTodo - post /:list/add
-    -   [ ] createList - post /:list
+    -   POST
 
-    -   [x] clearList - delete /:list/update
-    -   [x] deleteList - delete /:list/delete
-    -   [x] deleteTodo - delete /:list/delete/:id
+        -   [x] addTodo - /:list/add
+        -   [ ] createList - /:list
 
-    -   [ ] renameList - put /:list/rename
-    -   [ ] Move Todo - put /:list/move/:id/
-    -   [x] Update Todo - put /:list/update/:id
+    -   DELETE
 
-    -   [x] Get Lists - get /list
-            getLists
+        -   [x] clearList - /:list/update
+        -   [x] deleteList - /:list/delete
+        -   [x] deleteTodo - /:list/delete/:id
 
-    -   [x] Move Todo
+    -   PUT
+
+        -   [ ] renameList - /:list/rename
+        -   [ ] moveTodo - /:list/move/:id/
+        -   [x] updateTodo - /:list/update/:id
+
+    -   GET
+
+        -   [x] getLists - /list
 
 -   Add Web Push notifications for app
 
