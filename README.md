@@ -1,24 +1,28 @@
 /api
 
--   [x] login - post /auth/login
--   [x] register - post /auth/register
+-   /auth
 
--   [x] addTodo - post /:list/add
--   [ ] createList - post /:list
+    -   [x] login - post /auth/login
+    -   [x] register - post /auth/register
 
--   [x] clearList - delete /:list/update
--   [x] deleteList - delete /:list/delete
--   [x] deleteTodo - delete /:list/delete/:id
+-   /list
 
--   [ ] renameList - put /:list/rename
--   [ ] Move Todo - put /:list/move/:id/
--   [x] Update Todo - put /:list/update/:id
+    -   [x] addTodo - post /:list/add
+    -   [ ] createList - post /:list
 
--   [x] Get Lists - get /list
-        getLists
+    -   [x] clearList - delete /:list/update
+    -   [x] deleteList - delete /:list/delete
+    -   [x] deleteTodo - delete /:list/delete/:id
 
--   [x] Move Todo
+    -   [ ] renameList - put /:list/rename
+    -   [ ] Move Todo - put /:list/move/:id/
+    -   [x] Update Todo - put /:list/update/:id
 
-Add Web Push notifications for app
+    -   [x] Get Lists - get /list
+            getLists
 
--   Use web-push with bull on a worker queue to implement cron jobs to send web push notifications
+    -   [x] Move Todo
+
+-   Add Web Push notifications for app
+
+-   [ ] Use web-push with bull on a worker queue to implement cron jobs to send web push notifications
