@@ -1,14 +1,14 @@
-import { Db } from 'mongodb';
-import Models from './models';
-import User from './models/user';
+import * as mongodb from 'mongodb';
+import * as Models from './models';
+import * as User from './models/user';
 
 export interface Context {
-	User: typeof User;
-	db: Db;
+	User: typeof User.UserClass;
+	db: mongodb.Db;
 }
 
-export default async () => {
+export const createContext = async () => {
 	return {
-		...(await Models())
+		...(await Models.default())
 	};
 };

@@ -1,45 +1,39 @@
-import { expect } from 'chai';
-import { Request, Response } from 'express';
-import sinon from 'sinon';
-import LoginController from '../../../../controllers/auth/login';
-import createMockContext, { MockResponse } from '../../mock';
+import * as express from 'express';
+import * as LoginController from '../../../../controllers/auth/login';
+import * as mock from '../../../mock';
 
-const context = createMockContext();
-const [Login] = LoginController(context);
+const context = mock.createMockContext();
+const [Login] = LoginController.controller(context);
 
 describe('Unit Testing Login controller', () => {
-	const req = ({ body: {} } as unknown) as Request;
-	const res = (new MockResponse() as unknown) as Response;
-	const resStatusSpy = sinon.spy(res, 'status');
-	const resJsonSpy = sinon.spy(res, 'json');
+	const req = ({ body: {} } as unknown) as express.Request;
+	const res = (new mock.MockResponse() as unknown) as express.Response;
+	jest.spyOn(res, 'status');
+	jest.spyOn(res, 'json');
 	const { db } = context;
 
 	beforeEach(async () => {
 		req.body = {};
 		await db.dropCollection('Users');
-		resStatusSpy.resetHistory();
-		resJsonSpy.resetHistory();
+		((res.status as unknown) as jest.SpyInstance).mockClear();
+		((res.json as unknown) as jest.SpyInstance).mockClear();
 	});
 
 	it('should return an error response if email or password is missing or have incorrect types in the request body', async () => {
 		req.body = {};
 		await Login(req, res);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: "'email' is not specified, 'password' is not specified"
+		});
 
 		req.body = {
 			email: 10,
 			password: 'password123'
 		};
 		await Login(req, res);
-
-		expect(resStatusSpy.calledTwice).to.equal(true);
-		expect(resStatusSpy.alwaysCalledWith(400)).to.equal(true);
-		expect(resJsonSpy.calledTwice).to.equal(true);
-		expect(resJsonSpy.getCall(0).args[0]).to.deep.equal({
-			error: "'email' is not specified, 'password' is not specified"
-		});
-		expect(resJsonSpy.getCall(1).args[0]).to.deep.equal({
-			error: "'email' value must be of type 'string'"
-		});
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({ error: "'email' value must be of type 'string'" });
 	});
 
 	it('should return an error if a user attempts to login with a non existent account', async () => {
@@ -48,12 +42,10 @@ describe('Unit Testing Login controller', () => {
 			password: 'password123'
 		};
 		await Login(req, res);
-		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: 'Account does not exist with this email'
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: 'Account does not exist with this email'
+		});
 	});
 
 	it('should return an error if the user entered an incorrect password', async () => {
@@ -68,12 +60,10 @@ describe('Unit Testing Login controller', () => {
 			username: 'John Doe'
 		});
 		await Login(req, res);
-		expect(resStatusSpy.calledOnceWith(401)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: 'Incorrect email or password'
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(401);
+		expect(res.json).lastCalledWith({
+			error: 'Incorrect email or password'
+		});
 	});
 
 	it('should successfully login a user if they send correct credentials and receive a JWT token', async () => {
@@ -84,13 +74,9 @@ describe('Unit Testing Login controller', () => {
 		const { User } = context;
 		await User.create(db, { ...req.body, username: 'John Doe' });
 		await Login(req, res);
-		expect(resStatusSpy.calledOnceWithExactly(200)).to.equal(true);
-		expect(resJsonSpy.calledOnce).to.equal(true);
-		expect(resJsonSpy.getCall(0).args[0])
-			.to.have.property('token')
-			.and.to.be.a('string');
-		expect(resJsonSpy.getCall(0).args[0])
-			.to.have.property('expires_at')
-			.and.to.be.a('number');
+		expect(res.status).lastCalledWith(200);
+		expect(res.json).lastCalledWith(
+			expect.objectContaining({ token: expect.any(String), expires_at: expect.any(Number) })
+		);
 	});
 });

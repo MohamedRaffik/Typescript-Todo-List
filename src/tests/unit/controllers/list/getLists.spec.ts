@@ -1,22 +1,19 @@
-import { expect } from 'chai';
-import { Request, Response } from 'express';
-import sinon from 'sinon';
-import getListsController from '../../../../controllers/list/getLists';
-import createMockContext, { MockResponse } from '../../mock';
+import * as express from 'express';
+import * as getListsController from '../../../../controllers/list/getLists';
+import * as mock from '../../../mock';
 
-const context = createMockContext();
-const [isAuthenticated, getLists] = getListsController(context);
+const context = mock.createMockContext();
+const [isAuthenticated, getLists] = getListsController.controller(context);
 
 describe('Unit Testing getLists controller', () => {
-	const req = ({ body: {} } as unknown) as Request;
-	const res = (new MockResponse() as unknown) as Response;
-	const resStatusSpy = sinon.spy(res, 'status');
-	const resJsonSpy = sinon.spy(res, 'json');
-	const next = sinon.stub();
-	const { db, User } = context;
+	const req = ({ body: {} } as unknown) as express.Request;
+	const res = (new mock.MockResponse() as unknown) as express.Response;
+	jest.spyOn(res, 'status');
+	jest.spyOn(res, 'json');
+	const next = jest.fn();
 
-	before(async () => {
-		const user = await User.create(db, {
+	beforeAll(async () => {
+		const user = await context.User.create(context.db, {
 			email: 'someemail@gmail.com',
 			username: 'John Doe',
 			password: 'password123'
@@ -26,17 +23,15 @@ describe('Unit Testing getLists controller', () => {
 
 	beforeEach(async () => {
 		req.body = {};
-		resStatusSpy.resetHistory();
-		resJsonSpy.resetHistory();
+		((res.status as unknown) as jest.SpyInstance).mockClear();
+		((res.json as unknown) as jest.SpyInstance).mockClear();
 	});
 
 	it('should always return with a succesful response with a users todo list', async () => {
 		await getLists(req, res, next);
-		expect(resStatusSpy.calledOnceWith(200)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				Master: []
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(200);
+		expect(res.json).lastCalledWith({
+			Master: []
+		});
 	});
 });

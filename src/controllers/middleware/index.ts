@@ -1,11 +1,15 @@
-import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { Payload } from '..';
-import { Context } from '../../context';
+import * as express from 'express';
+import * as jwt from 'jsonwebtoken';
+import * as controllersInterface from '..';
+import * as Context from '../../context';
 
-export default (context: Context) => {
+export const create = (context: Context.Context) => {
 	return {
-		isAuthenticated: async (req: Request, res: Response, next: NextFunction) => {
+		isAuthenticated: async (
+			req: express.Request,
+			res: express.Response,
+			next: express.NextFunction
+		) => {
 			const { User, db } = context;
 			if (!req.headers.authorization) {
 				return res.status(401).json({ error: 'Authorization Header not provided' });
@@ -15,7 +19,10 @@ export default (context: Context) => {
 				return res.status(401).json({ error: 'Incorrect Token Type, must be Bearer' });
 			}
 			try {
-				const payload = jwt.verify(token, String(process.env.SECRET_KEY)) as Payload;
+				const payload = jwt.verify(
+					token,
+					String(process.env.SECRET_KEY)
+				) as controllersInterface.Payload;
 				if (payload.expires_at < Date.now()) {
 					return res.status(401).json({ error: 'JWT Token is expired' });
 				}

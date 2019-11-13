@@ -1,35 +1,31 @@
-import { expect } from 'chai';
-import { Request, Response } from 'express';
-import sinon from 'sinon';
-import RegisterController from '../../../../controllers/auth/register';
-import createMockContext, { MockResponse } from '../../mock';
+import * as express from 'express';
+import * as RegisterController from '../../../../controllers/auth/register';
+import * as mock from '../../../mock';
 
-const context = createMockContext();
-const [Register] = RegisterController(context);
+const context = mock.createMockContext();
+const [Register] = RegisterController.controller(context);
 
 describe('Unit Testing Register controller', () => {
-	const req = ({ body: {} } as unknown) as Request;
-	const res = (new MockResponse() as unknown) as Response;
-	const resStatusSpy = sinon.spy(res, 'status');
-	const resJsonSpy = sinon.spy(res, 'json');
+	const req = ({ body: {} } as unknown) as express.Request;
+	const res = (new mock.MockResponse() as unknown) as express.Response;
+	jest.spyOn(res, 'status');
+	jest.spyOn(res, 'json');
 	const { db } = context;
 
 	beforeEach(async () => {
 		req.body = {};
 		db.dropCollection('Users');
-		resStatusSpy.resetHistory();
-		resJsonSpy.resetHistory();
+		((res.status as unknown) as jest.SpyInstance).mockClear();
+		((res.json as unknown) as jest.SpyInstance).mockClear();
 	});
 
 	it('should return an error if there is a missing email, username, or password', async () => {
 		await Register(req, res);
-		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error:
-					"'email' is not specified, 'password' is not specified, 'username' is not specified"
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error:
+				"'email' is not specified, 'password' is not specified, 'username' is not specified"
+		});
 	});
 
 	it('should return an error if a field has an incorrect type', async () => {
@@ -39,12 +35,10 @@ describe('Unit Testing Register controller', () => {
 			username: 'John Doe'
 		};
 		await Register(req, res);
-		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: "'email' value must be of type 'string'"
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: "'email' value must be of type 'string'"
+		});
 	});
 
 	it('should return an error if the password length is shorter than 8 characters', async () => {
@@ -54,6 +48,10 @@ describe('Unit Testing Register controller', () => {
 			password: 'password'
 		};
 		await Register(req, res);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: 'Password length is too short, must be greater than 8 characters'
+		});
 	});
 
 	it('should return an error if the user already exists in the database', async () => {
@@ -65,13 +63,10 @@ describe('Unit Testing Register controller', () => {
 			password: 'password123'
 		};
 		await Register(req, res);
-		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		// Custom Error from the mock database
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: 'Duplicate key'
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: 'Duplicate key'
+		});
 	});
 
 	it('should return a JWT with its expiration date after a successful response', async () => {
@@ -81,13 +76,9 @@ describe('Unit Testing Register controller', () => {
 			password: 'password123'
 		};
 		await Register(req, res);
-		expect(resStatusSpy.calledOnceWith(200)).to.equal(true);
-		expect(resJsonSpy.calledOnce).to.equal(true);
-		expect(resJsonSpy.getCall(0).args[0])
-			.to.have.property('token')
-			.and.to.be.a('string');
-		expect(resJsonSpy.getCall(0).args[0])
-			.to.have.property('expires_at')
-			.and.to.be.a('number');
+		expect(res.status).lastCalledWith(200);
+		expect(res.json).lastCalledWith(
+			expect.objectContaining({ token: expect.any(String), expires_at: expect.any(Number) })
+		);
 	});
 });

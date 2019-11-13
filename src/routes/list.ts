@@ -1,9 +1,10 @@
-import { Router } from 'express';
-import { Context } from '../context';
-import { List } from '../controllers';
+import * as express from 'express';
+import * as Context from '../context';
+import * as controllers from '../controllers';
 
-export default (context: Context) => {
-	const ListRouter = Router();
+export const Router = (context: Context.Context) => {
+	const ListRouter = express.Router();
+	const { List } = controllers;
 
 	ListRouter.get('/', List.getLists(context));
 	ListRouter.post('/:list/add', List.addTodo(context));

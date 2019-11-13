@@ -1,13 +1,13 @@
-import { Request, Response } from 'express';
-import { Context } from '../../context';
-import User from '../../models/user';
-import middleware from '../middleware';
+import * as express from 'express';
+import * as Context from '../../context';
+import * as User from '../../models/user';
+import * as middleware from '../middleware';
 
-export default (context: Context) => {
-	const { isAuthenticated } = middleware(context);
-	const deleteList = async (req: Request, res: Response) => {
+export const controller = (context: Context.Context) => {
+	const { isAuthenticated } = middleware.create(context);
+	const deleteList = async (req: express.Request, res: express.Response) => {
 		const { list } = req.params;
-		const user = req.user as User;
+		const user = req.user as User.UserClass;
 		try {
 			await user.deleteList(list);
 			return res.status(200);

@@ -1,18 +1,18 @@
-import { Request, Response } from 'express';
-import { Context } from '../../context';
-import User, { Todo } from '../../models/user';
-import middleware from '../middleware';
+import * as express from 'express';
+import * as Context from '../../context';
+import * as User from '../../models/user';
+import * as middleware from '../middleware';
 
 interface ClearListResponse {
 	list: string;
-	items: Todo[];
+	items: User.Todo[];
 }
 
-export default (context: Context) => {
-	const { isAuthenticated } = middleware(context);
-	const clearList = async (req: Request, res: Response) => {
+export const controller = (context: Context.Context) => {
+	const { isAuthenticated } = middleware.create(context);
+	const clearList = async (req: express.Request, res: express.Response) => {
 		const { list } = req.params;
-		const user = req.user as User;
+		const user = req.user as User.UserClass;
 		try {
 			await user.clearList(list);
 			const response: ClearListResponse = { list, items: user.lists[list] };

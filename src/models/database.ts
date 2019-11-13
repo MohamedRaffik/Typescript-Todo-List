@@ -1,7 +1,7 @@
-import MongoClient from 'mongodb';
+import * as mongodb from 'mongodb';
 
-export default async () => {
-	const client = await MongoClient.connect(String(process.env.MONGODB_URI), {
+export const connect = async () => {
+	const client = await mongodb.MongoClient.connect(String(process.env.MONGODB_URI), {
 		useNewUrlParser: true,
 		useUnifiedTopology: true
 	});

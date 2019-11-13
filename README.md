@@ -26,7 +26,7 @@
 
     -   GET
 
-        -   [x] getLists - /list
+        -   [x] getLists - /
 
 -   Add Web Push notifications for app
 

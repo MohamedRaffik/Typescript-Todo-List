@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { Payload } from '..';
-import { Context } from '../../context';
-import { validateFields } from '../utils';
+import * as express from 'express';
+import * as jwt from 'jsonwebtoken';
+import * as controllerInterfaces from '..';
+import * as Context from '../../context';
+import * as utils from '../utils';
 
 interface RegisterBody {
 	email: string;
@@ -15,10 +15,10 @@ interface RegisterResponse {
 	expires_at: number;
 }
 
-export default (context: Context) => {
-	const Register = async (req: Request, res: Response) => {
+export const controller = (context: Context.Context) => {
+	const Register = async (req: express.Request, res: express.Response) => {
 		const body = req.body;
-		const error = validateFields(body, {
+		const error = utils.validateFields(body, {
 			email: { type: 'string' },
 			password: { type: 'string' },
 			username: { type: 'string' }
@@ -30,7 +30,7 @@ export default (context: Context) => {
 		const { email, password, username } = req.body as RegisterBody;
 		try {
 			const user = await User.create(db, { email, password, username });
-			const payload: Payload = {
+			const payload: controllerInterfaces.Payload = {
 				email: user.email,
 				expires_at: Date.now() + Number(process.env.JWT_EXPIRATION)
 			};

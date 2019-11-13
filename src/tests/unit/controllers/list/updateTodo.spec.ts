@@ -1,29 +1,26 @@
-import { expect } from 'chai';
-import { Request, Response } from 'express';
-import sinon from 'sinon';
-import updateTodoController from '../../../../controllers/list/updateTodo';
-import { Todo } from '../../../../models/user';
-import createMockContext, { MockResponse } from '../../mock';
+import * as express from 'express';
+import * as updateTodoController from '../../../../controllers/list/updateTodo';
+import * as User from '../../../../models/user';
+import * as mock from '../../../mock';
 
-const context = createMockContext();
-const [isAuthenticated, updateTodo] = updateTodoController(context);
+const context = mock.createMockContext();
+const [isAuthenticated, updateTodo] = updateTodoController.controller(context);
 
 describe('Unit Testing updateTodo controller', () => {
-	const req = ({ body: {} } as unknown) as Request;
-	const res = (new MockResponse() as unknown) as Response;
-	const resStatusSpy = sinon.spy(res, 'status');
-	const resJsonSpy = sinon.spy(res, 'json');
-	const next = sinon.stub();
-	const { db, User } = context;
-	const todo: Todo = {
+	const req = ({ body: {} } as unknown) as express.Request;
+	const res = (new mock.MockResponse() as unknown) as express.Response;
+	jest.spyOn(res, 'status');
+	jest.spyOn(res, 'json');
+	const next = jest.fn();
+	const todo: User.Todo = {
 		title: 'Item',
 		notes: [],
 		created: Date.now(),
 		completed: false
 	};
 
-	before(async () => {
-		const user = await User.create(db, {
+	beforeAll(async () => {
+		const user = await context.User.create(context.db, {
 			email: 'someemail@gmail.com',
 			username: 'John Doe',
 			password: 'password123'
@@ -34,58 +31,50 @@ describe('Unit Testing updateTodo controller', () => {
 
 	beforeEach(async () => {
 		req.body = {};
-		resStatusSpy.resetHistory();
-		resJsonSpy.resetHistory();
+		((res.status as unknown) as jest.SpyInstance).mockClear();
+		((res.json as unknown) as jest.SpyInstance).mockClear();
 	});
 
 	it('should return an error if there are invalid types in the body of the request', async () => {
 		req.body = { title: 10 };
 		req.params = { list: 'Master', id: String(100) };
 		await updateTodo(req, res, next);
-		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: "'title' value must be of type 'string'"
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: "'title' value must be of type 'string'"
+		});
 	});
 
 	it('should return an error response if the list does not exist', async () => {
 		req.body = { title: 'Updated Item' };
 		req.params = { list: 'Mister', id: String(1) };
 		await updateTodo(req, res, next);
-		expect(resStatusSpy.calledOnceWithExactly(400)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: "'Mister' list does not exist"
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: "'Mister' list does not exist"
+		});
 	});
 
 	it('should return an error response if the item does not exist', async () => {
 		req.body = { title: 'Updated Item' };
 		req.params = { list: 'Master', id: String(1) };
 		await updateTodo(req, res, next);
-		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: "Item does not exist in 'Master' list"
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: "Item does not exist in 'Master' list"
+		});
 	});
 
 	it('should return a successful response with the updated item', async () => {
 		req.body = { title: 'Updated Item', completed: true };
 		req.params = { list: 'Master', id: String(0) };
 		await updateTodo(req, res, next);
-		expect(resStatusSpy.calledOnceWith(200)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				...todo,
-				title: 'Updated Item',
-				completed: true,
-				id: 0
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(200);
+		expect(res.json).lastCalledWith({
+			...todo,
+			title: 'Updated Item',
+			completed: true,
+			id: 0
+		});
 	});
 });

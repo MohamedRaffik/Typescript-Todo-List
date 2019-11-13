@@ -1,15 +1,15 @@
-import addTodo from './addTodo';
-import clearList from './clearList';
-import deleteList from './deleteList';
-import deleteTodo from './deleteTodo';
-import getLists from './getLists';
-import updateTodo from './updateTodo';
+import * as addTodo from './addTodo';
+import * as clearList from './clearList';
+import * as deleteList from './deleteList';
+import * as deleteTodo from './deleteTodo';
+import * as getLists from './getLists';
+import * as updateTodo from './updateTodo';
 
-export default {
-	addTodo,
-	clearList,
-	deleteList,
-	deleteTodo,
-	getLists,
-	updateTodo
+export const ListControllers = {
+	addTodo: addTodo.controller,
+	clearList: clearList.controller,
+	deleteList: deleteList.controller,
+	deleteTodo: deleteTodo.controller,
+	getLists: getLists.controller,
+	updateTodo: updateTodo.controller
 };

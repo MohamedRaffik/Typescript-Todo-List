@@ -1,22 +1,20 @@
-import { expect } from 'chai';
-import { Request, Response } from 'express';
-import sinon from 'sinon';
-import deleteTodoController from '../../../../controllers/list/deleteTodo';
-import createMockContext, { MockResponse } from '../../mock';
+import * as express from 'express';
+import * as deleteTodoController from '../../../../controllers/list/deleteTodo';
+import * as User from '../../../../models/user';
+import * as mock from '../../../mock';
 
-const context = createMockContext();
-const [isAuthenticated, deleteTodo] = deleteTodoController(context);
+const context = mock.createMockContext();
+const [isAuthenticated, deleteTodo] = deleteTodoController.controller(context);
 
 describe('Unit Testing deleteTodo controller', () => {
-	const req = ({ body: {} } as unknown) as Request;
-	const res = (new MockResponse() as unknown) as Response;
-	const resStatusSpy = sinon.spy(res, 'status');
-	const resJsonSpy = sinon.spy(res, 'json');
-	const next = sinon.stub();
-	const { db, User } = context;
+	const req = ({ body: {} } as unknown) as express.Request;
+	const res = (new mock.MockResponse() as unknown) as express.Response;
+	jest.spyOn(res, 'status');
+	jest.spyOn(res, 'json');
+	const next = jest.fn();
 
-	before(async () => {
-		const user = await User.create(db, {
+	beforeAll(async () => {
+		const user = await context.User.create(context.db, {
 			email: 'someemail@gmail.com',
 			username: 'John Doe',
 			password: 'password123'
@@ -26,39 +24,34 @@ describe('Unit Testing deleteTodo controller', () => {
 
 	beforeEach(async () => {
 		req.body = {};
-		resStatusSpy.resetHistory();
-		resJsonSpy.resetHistory();
+		((res.status as unknown) as jest.SpyInstance).mockClear();
+		((res.json as unknown) as jest.SpyInstance).mockClear();
 	});
 
 	it('should return an error response if the list does not exist', async () => {
 		req.params = { list: 'School', id: String(100) };
 		await deleteTodo(req, res, next);
-		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		expect(
-			resJsonSpy.calledOnceWithExactly({
-				error: "'School' list does not exist"
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: "'School' list does not exist"
+		});
 	});
 
 	it('should return an error message if the item does not exist', async () => {
 		req.params = { list: 'Master', id: String(100) };
 		await deleteTodo(req, res, next);
-		expect(resStatusSpy.calledOnceWith(400)).to.equal(true);
-		expect(
-			resJsonSpy.alwaysCalledWithExactly({
-				error: "Item does not exist in 'Master' list"
-			})
-		).to.equal(true);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: "Item does not exist in 'Master' list"
+		});
 	});
 
 	it('should return a successful response if the item was successfully deleted', async () => {
 		req.params = { list: 'Master', id: String(0) };
-		if (req.user) {
-			await req.user.addTodo('Master', { title: 'A', notes: [], created: Date.now() });
-		}
+		const user = req.user as User.UserClass;
+		await user.addTodo('Master', { title: 'A', notes: [], created: Date.now() });
 		await deleteTodo(req, res, next);
-		expect(resStatusSpy.calledOnceWith(200)).to.equal(true);
-		expect(resJsonSpy.notCalled).to.equal(true);
+		expect(res.status).lastCalledWith(200);
+		expect(res.json).toBeCalledTimes(0);
 	});
 });

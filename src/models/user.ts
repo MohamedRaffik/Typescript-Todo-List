@@ -1,6 +1,5 @@
-import { compareSync, hashSync } from 'bcrypt';
-import { Db } from 'mongodb';
-
+import * as bcrypt from 'bcrypt';
+import * as mongodb from 'mongodb';
 export interface Todo {
 	id?: number;
 	title: string;
@@ -14,14 +13,14 @@ export interface TodoList {
 	[list: string]: Todo[];
 }
 
-export interface UserInfo {
+export interface Info {
 	email: string;
 	username: string;
 	password: string;
 	lists?: TodoList;
 }
 
-export interface UserUpdate {
+export interface Update {
 	username?: string;
 	password?: string;
 	lists?: TodoList;
@@ -33,21 +32,21 @@ export interface UpdateTodo {
 	completed?: boolean;
 }
 
-export default class User {
-	public static get = async (db: Db, email: string) => {
+export class UserClass {
+	public static get = async (db: mongodb.Db, email: string) => {
 		const doc = await db.collection('Users').findOne({ _id: email });
 		if (!doc) {
 			return undefined;
 		}
 		const { _id, ...info } = doc;
-		return new User(db, { email: _id, ...info });
+		return new UserClass(db, { email: _id, ...info });
 	};
-	public static create = async (db: Db, info: UserInfo) => {
+	public static create = async (db: mongodb.Db, info: Info) => {
 		if (info.password.length <= 8) {
 			throw Error('Password length is too short, must be greater than 8 characters');
 		}
-		info.password = hashSync(info.password, 10);
-		const user = new User(db, info);
+		info.password = bcrypt.hashSync(info.password, 10);
+		const user = new UserClass(db, info);
 		const { email, ...userInfo } = user;
 		delete userInfo.db;
 		await db.collection('Users').insertOne({ _id: email, ...userInfo });
@@ -57,9 +56,9 @@ export default class User {
 	public username: string;
 	public password: string;
 	public lists: TodoList;
-	public db: Db;
+	public db: mongodb.Db;
 
-	constructor(db: Db, info: UserInfo) {
+	constructor(db: mongodb.Db, info: Info) {
 		this.email = info.email;
 		this.username = info.username;
 		this.password = info.password;
@@ -68,7 +67,7 @@ export default class User {
 	}
 
 	public authenticate(password: string) {
-		return compareSync(password, this.password);
+		return bcrypt.compareSync(password, this.password);
 	}
 
 	public async addTodo(list: string, todo: Todo) {
@@ -181,7 +180,7 @@ export default class User {
 		}
 	}
 
-	private async update(update: UserUpdate) {
+	private async update(update: Update) {
 		await this.db.collection('Users').updateOne({ _id: this.email }, { $set: update });
 	}
 }

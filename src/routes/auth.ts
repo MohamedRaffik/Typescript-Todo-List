@@ -1,9 +1,10 @@
-import { Router } from 'express';
-import { Context } from '../context';
-import { Auth } from '../controllers';
+import * as express from 'express';
+import * as Context from '../context';
+import * as controllers from '../controllers';
 
-export default (context: Context) => {
-	const AuthRouter = Router();
+export const Router = (context: Context.Context) => {
+	const AuthRouter = express.Router();
+	const { Auth } = controllers;
 
 	AuthRouter.get('/login', Auth.Login(context));
 	AuthRouter.post('/register', Auth.Register(context));

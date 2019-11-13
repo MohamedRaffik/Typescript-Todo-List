@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { Payload } from '..';
-import { Context } from '../../context';
-import { validateFields } from '../utils';
+import * as express from 'express';
+import * as jwt from 'jsonwebtoken';
+import * as controllerInterfaces from '..';
+import * as Context from '../../context';
+import * as utils from '../utils';
 
 interface LoginBody {
 	email: string;
@@ -14,10 +14,10 @@ interface LoginResponse {
 	expires_at: number;
 }
 
-export default (context: Context) => {
-	const Login = async (req: Request, res: Response) => {
+export const controller = (context: Context.Context) => {
+	const Login = async (req: express.Request, res: express.Response) => {
 		const body = req.body;
-		const error = validateFields(body, {
+		const error = utils.validateFields(body, {
 			email: { type: 'string' },
 			password: { type: 'string' }
 		});
@@ -33,7 +33,7 @@ export default (context: Context) => {
 		if (!user.authenticate(password)) {
 			return res.status(401).json({ error: 'Incorrect email or password' });
 		}
-		const payload: Payload = {
+		const payload: controllerInterfaces.Payload = {
 			email: user.email,
 			expires_at: Date.now() + Number(process.env.JWT_EXPIRATION)
 		};
