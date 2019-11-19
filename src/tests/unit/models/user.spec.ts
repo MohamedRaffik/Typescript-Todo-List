@@ -124,7 +124,7 @@ describe('Unit Testing User Class', () => {
 			await user.addTodo('TestList', todo);
 			expect(user.lists['TestList'].length).toEqual(1);
 			await expect(user.renameList('TestList', 'Master')).rejects.toThrow(
-				"Cannot rename 'TestList' list to 'Master' list, 'Master' list already exists"
+				"Cannot rename 'TestList' list to 'Master', 'Master' list already exists"
 			);
 		});
 

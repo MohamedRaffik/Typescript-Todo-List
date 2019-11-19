@@ -1,20 +1,20 @@
 import * as express from 'express';
-import * as clearListController from '../../../../controllers/list/clearList';
+import * as createListController from '../../../../controllers/list/createList';
+import * as User from '../../../../models/user';
 import * as mock from '../../../mock';
 
 const context = mock.createMockContext();
-const [isAuthenticated, clearList] = clearListController.controller(context);
+const [isAuthenticated, createList] = createListController.controller(context);
 
-describe('Unit Testing clearList controller', () => {
+describe('Unit Testing createList controller', () => {
 	const req = ({ body: {} } as unknown) as express.Request;
 	const res = (new mock.MockResponse() as unknown) as express.Response;
 	jest.spyOn(res, 'status');
 	jest.spyOn(res, 'json');
 	const next = jest.fn();
-	const { db, User } = context;
 
 	beforeAll(async () => {
-		const user = await User.create(db, {
+		const user = await context.User.create(context.db, {
 			email: 'someemail@gmail.com',
 			username: 'John Doe',
 			password: 'password123'
@@ -28,21 +28,20 @@ describe('Unit Testing clearList controller', () => {
 		((res.json as unknown) as jest.SpyInstance).mockClear();
 	});
 
-	it('should return an error response if the list does not exist', async () => {
-		req.params = { list: 'School' };
-		await clearList(req, res, next);
+	it('should return an error response if the list to be created already exists', async () => {
+		req.params = { list: 'Master' };
+		await createList(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
-			error: "'School' list does not exist"
+			error: "'Master' list already exists"
 		});
 	});
 
-	it('should return the updated list with a successful response', async () => {
-		req.params = { list: 'Master' };
-		await clearList(req, res, next);
+	it('should return with a successful response after creating the list', async () => {
+		req.params = { list: 'NewList' };
+		await createList(req, res, next);
 		expect(res.status).lastCalledWith(200);
-		expect(res.json).lastCalledWith({
-			Master: []
-		});
+		const user = req.user as User.UserClass;
+		expect(user.lists['NewList']).toEqual([]);
 	});
 });

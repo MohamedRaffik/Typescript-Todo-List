@@ -10,10 +10,17 @@
 		"build": "npm run build:server && npm run build:client",
 		"build:server": "tsc --build tsconfig.prod.json",
 		"build:client": "webpack --config webpack.prod.js",
-		"test": "jest"
+		"test": "jest",
+		"testfile": "jest $FILE"
 	},
 	"author": "",
 	"license": "ISC",
+	"husky": {
+		"hooks": {
+			"pre-commit": "tslint -p 'src'",
+			"pre-push": "npm test"
+		}
+	},
 	"devDependencies": {
 		"@babel/core": "^7.7.2",
 		"@babel/preset-env": "^7.7.1",
@@ -37,6 +44,7 @@
 		"css-loader": "^3.2.0",
 		"dotenv": "^8.2.0",
 		"html-webpack-plugin": "^3.2.0",
+		"husky": "^3.0.9",
 		"jest": "^24.9.0",
 		"mini-css-extract-plugin": "^0.8.0",
 		"node-sass": "^4.13.0",

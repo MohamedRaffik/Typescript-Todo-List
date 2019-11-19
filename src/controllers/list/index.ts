@@ -1,8 +1,11 @@
 import * as addTodo from './addTodo';
 import * as clearList from './clearList';
+import * as createList from './createList';
 import * as deleteList from './deleteList';
 import * as deleteTodo from './deleteTodo';
 import * as getLists from './getLists';
+import * as moveTodo from './moveTodo';
+import * as renameList from './renameList';
 import * as updateTodo from './updateTodo';
 
 export const ListControllers = {
@@ -11,5 +14,8 @@ export const ListControllers = {
 	deleteList: deleteList.controller,
 	deleteTodo: deleteTodo.controller,
 	getLists: getLists.controller,
-	updateTodo: updateTodo.controller
+	updateTodo: updateTodo.controller,
+	createList: createList.controller,
+	renameList: renameList.controller,
+	moveTodo: moveTodo.controller
 };

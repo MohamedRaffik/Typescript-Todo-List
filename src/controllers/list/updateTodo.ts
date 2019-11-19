@@ -16,18 +16,27 @@ export const controller = (context: Context.Context) => {
 		const body = req.body as UpdateTodoBody;
 		const { list, id } = req.params;
 		const user = req.user as User.UserClass;
-		let error = '';
+		const error: string[] = [];
 		if ('title' in body) {
-			error += utils.validateFields(body, { title: { type: 'string' } });
+			const e = utils.validateFields(body, { title: { type: 'string' } });
+			if (e) {
+				error.push(e);
+			}
 		}
 		if ('completed' in body) {
-			error += utils.validateFields(body, { completed: { type: 'boolean' } });
+			const e = utils.validateFields(body, { completed: { type: 'boolean' } });
+			if (e) {
+				error.push(e);
+			}
 		}
 		if ('notes' in body) {
-			error += utils.validateArray(body.notes as any[], { type: 'string' });
+			const e = utils.validateArray(body.notes as any[], { type: 'string' });
+			if (e) {
+				error.push(e);
+			}
 		}
-		if (error) {
-			return res.status(400).json({ error });
+		if (error.length !== 0) {
+			return res.status(400).json({ error: error.join(', ') });
 		}
 		try {
 			await user.updateTodo(list, Number(id), {

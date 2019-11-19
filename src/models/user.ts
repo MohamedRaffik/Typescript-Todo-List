@@ -73,6 +73,7 @@ export class UserClass {
 
 	public async addTodo(list: string, todo: Todo) {
 		todo.completed = false;
+		this.validListName(list);
 		try {
 			await this.createList(list);
 		} catch (err) {
@@ -91,10 +92,6 @@ export class UserClass {
 
 	public async updateTodo(list: string, id: number, update: UpdateTodo) {
 		this.validOperation(list, id);
-		const keys = Object.keys(update);
-		if (keys.length === 0) {
-			return;
-		}
 		Object.keys(update).forEach(key => {
 			if (update[key] !== undefined) {
 				this.lists[list][id][key] = update[key];
@@ -105,13 +102,9 @@ export class UserClass {
 
 	public async moveTodo(list: string, id: number, newList: string, newId: number) {
 		this.validOperation(list, id);
-		try {
-			await this.createList(newList);
-		} catch (err) {
-			// tslint:disable-next-line:no-empty-line
-		}
+		this.validOperation(newList);
 		if (!(0 <= newId)) {
-			throw Error(`Cannot add item to the '${newList}' list at index ${newId}`);
+			throw Error(`Cannot move item to the '${newList}' list at position ${newId}`);
 		}
 		// Reassign newId to the end of the list if it is greater than the list length or to remain itself (splice works with any large value
 		// but to reassign id of the item newId must be resolved)
@@ -160,9 +153,10 @@ export class UserClass {
 		}
 		if (newList in this.lists) {
 			throw Error(
-				`Cannot rename '${list}' list to '${newList}' list, '${newList}' list already exists`
+				`Cannot rename '${list}' list to '${newList}', '${newList}' list already exists`
 			);
 		}
+		this.validListName(newList);
 		const oldList = this.lists[list];
 		delete this.lists[list];
 		await this.createList(newList);
@@ -178,6 +172,13 @@ export class UserClass {
 			if (!(0 <= id && id < this.lists[list].length)) {
 				throw Error(`Item does not exist in '${list}' list`);
 			}
+		}
+	}
+
+	private validListName(list: string) {
+		// Tests if string is empty or has only whitespace
+		if (!/\S/.test(list)) {
+			throw Error(`'${list}' is not a valid list name`);
 		}
 	}
 

@@ -19,7 +19,6 @@ export const controller = (context: Context.Context) => {
 		let error = utils.validateFields(body, {
 			list: { type: 'string', default: 'Master' },
 			notes: {},
-			created: { type: 'number', default: Date.now() },
 			completed: { type: 'boolean', default: false }
 		});
 		if (error) {
@@ -37,7 +36,7 @@ export const controller = (context: Context.Context) => {
 			completed: body.completed
 		};
 		await user.addTodo(list, newTodo);
-		const response: User.Todo = { ...user.lists[list][user.lists[list].length - 1] };
+		const response: User.Todo = user.lists[list][user.lists[list].length - 1];
 		return res.status(200).json(response);
 	};
 	return [isAuthenticated, addTodo];

@@ -10,7 +10,9 @@
     -   POST
 
         -   [x] addTodo - /:list/add
-        -   [ ] createList - /:list
+        -   [x] createList - /:list \* Change method
+        -   [ ] moveTodo - /:list/move/:id/ \* Change method
+
 
     -   DELETE
 
@@ -20,8 +22,7 @@
 
     -   PUT
 
-        -   [ ] renameList - /:list/rename
-        -   [ ] moveTodo - /:list/move/:id/
+        -   [x] renameList - /:list/rename
         -   [x] updateTodo - /:list/update/:id
 
     -   GET

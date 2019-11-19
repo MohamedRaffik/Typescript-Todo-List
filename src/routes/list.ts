@@ -7,11 +7,17 @@ export const Router = (context: Context.Context) => {
 	const { List } = controllers;
 
 	ListRouter.get('/', List.getLists(context));
+
 	ListRouter.post('/:list/add', List.addTodo(context));
-	ListRouter.put('/:list/update', List.clearList(context));
+	ListRouter.post('/:list', List.createList(context));
+	ListRouter.post('/:list/move/:id', List.moveTodo(context));
+
+	ListRouter.put('/:list/rename', List.renameList(context));
+	ListRouter.put('/:list/:id', List.updateTodo(context));
+
+	ListRouter.delete('/:list/update', List.clearList(context));
 	ListRouter.delete('/:list/delete', List.deleteList(context));
 	ListRouter.delete('/:list/:id', List.deleteTodo(context));
-	ListRouter.put('/:list/:id', List.updateTodo(context));
 
 	return ListRouter;
 };
