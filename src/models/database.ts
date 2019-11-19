@@ -5,5 +5,5 @@ export const connect = async () => {
 		useNewUrlParser: true,
 		useUnifiedTopology: true
 	});
-	return client.db();
+	return { client, db: client.db() };
 };
