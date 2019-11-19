@@ -4,6 +4,7 @@ import * as User from '../../../models/user';
 
 describe('Unit Testing User Class', () => {
 	let db: mongodb.Db;
+	let client: mongodb.MongoClient;
 	const info: User.Info = {
 		email: 'someemail@gmail.com',
 		username: 'JohnnyBoy',
@@ -11,7 +12,9 @@ describe('Unit Testing User Class', () => {
 	};
 
 	beforeAll(async () => {
-		db = await Database.connect();
+		const connection = await Database.connect();
+		db = connection.db;
+		client = connection.client;
 		try {
 			await db.dropCollection('Users');
 		} catch (err) {
@@ -25,6 +28,7 @@ describe('Unit Testing User Class', () => {
 		} catch (err) {
 			// tslint:disable-next-line:no-empty
 		}
+		await client.close();
 	});
 
 	it('should create a user, insert it into the database and retrieve the user', async () => {

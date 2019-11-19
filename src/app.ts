@@ -22,7 +22,7 @@ export const StartServer = async (): Promise<[express.Application, http.Server]>
 
 	return await new Promise(resolve => {
 		const httpServer = app.listen(PORT, () => {
-			httpServer.on('close', () => context.client.close());
+			httpServer.on('close', async () => await context.client.close());
 			resolve([app, httpServer]);
 		});
 	});

@@ -10,7 +10,8 @@
 		"build": "npm run build:server && npm run build:client",
 		"build:server": "tsc --build tsconfig.prod.json",
 		"build:client": "webpack --config webpack.prod.js",
-		"test:server": "jest"
+		"test:server": "jest",
+		"test": "npm run test:server"
 	},
 	"author": "",
 	"license": "ISC",

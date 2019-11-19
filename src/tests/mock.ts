@@ -51,6 +51,7 @@ class Database {
 export const createMockContext = () => {
 	return {
 		User: User.UserClass,
-		db: (new Database() as unknown) as mongodb.Db
+		db: (new Database() as unknown) as mongodb.Db,
+		client: ({} as unknown) as mongodb.MongoClient
 	};
 };
