@@ -38,6 +38,7 @@
 		"@types/react-dom": "^16.9.4",
 		"@types/react-router": "^5.1.2",
 		"@types/react-router-dom": "^5.1.2",
+		"@types/request": "^2.48.3",
 		"@types/supertest": "^2.0.8",
 		"autoprefixer": "^9.7.1",
 		"babel-loader": "^8.0.6",
@@ -72,6 +73,7 @@
 		"webpack-merge": "^4.2.2"
 	},
 	"dependencies": {
+		"@types/chance": "^1.0.7",
 		"bcrypt": "^3.0.6",
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.4",

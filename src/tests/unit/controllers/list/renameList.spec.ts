@@ -11,6 +11,7 @@ describe('Unit Testing renameList controller', () => {
 	const res = (new mock.MockResponse() as unknown) as express.Response;
 	jest.spyOn(res, 'status');
 	jest.spyOn(res, 'json');
+	jest.spyOn(res, 'end');
 	const next = jest.fn();
 
 	beforeEach(async () => {
@@ -24,6 +25,7 @@ describe('Unit Testing renameList controller', () => {
 		req.body = {};
 		((res.status as unknown) as jest.SpyInstance).mockClear();
 		((res.json as unknown) as jest.SpyInstance).mockClear();
+		((res.end as unknown) as jest.SpyInstance).mockClear();
 	});
 
 	it('should return an error response if newListName is not in the body', async () => {
@@ -77,5 +79,6 @@ describe('Unit Testing renameList controller', () => {
 		await user.createList('TestList');
 		await renameList(req, res, next);
 		expect(res.status).lastCalledWith(200);
+		expect(res.end).toBeCalled();
 	});
 });

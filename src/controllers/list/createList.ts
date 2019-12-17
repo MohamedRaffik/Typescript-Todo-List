@@ -10,7 +10,7 @@ export const controller = (context: Context.Context) => {
 		const user = req.user as User.UserClass;
 		try {
 			await user.createList(list);
-			return res.status(200);
+			return res.status(200).end();
 		} catch (err) {
 			return res.status(400).json({ error: err.message });
 		}

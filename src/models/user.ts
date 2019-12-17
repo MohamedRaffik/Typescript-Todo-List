@@ -42,6 +42,7 @@ export class UserClass {
 		const { _id, ...info } = doc;
 		return new UserClass(db, { email: _id, ...info });
 	};
+
 	public static create = async (db: mongodb.Db, info: Info) => {
 		if (info.password.length <= 8) {
 			throw Error('Password length is too short, must be greater than 8 characters');
@@ -53,6 +54,7 @@ export class UserClass {
 		await db.collection('Users').insertOne({ _id: email, ...userInfo });
 		return user;
 	};
+
 	public email: string;
 	public username: string;
 	public password: string;
@@ -129,6 +131,7 @@ export class UserClass {
 			throw Error(`'${list}' list already exists`);
 		}
 		this.lists[list] = [];
+		await this.update({ lists: this.lists });
 	}
 
 	public async deleteList(list: string) {

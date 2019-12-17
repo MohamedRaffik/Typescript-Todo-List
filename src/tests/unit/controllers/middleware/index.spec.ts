@@ -8,7 +8,7 @@ const context = mock.createMockContext();
 const { isAuthenticated } = middleware.create(context);
 
 describe('Unit Testing middleware functions', () => {
-	const req = ({ body: {}, headers: {} } as unknown) as express.Request;
+	const req = ({ body: {}, headers: {}, cookies: {} } as unknown) as express.Request;
 	const res = (new mock.MockResponse() as unknown) as express.Response;
 	jest.spyOn(res, 'status');
 	jest.spyOn(res, 'json');
@@ -16,6 +16,7 @@ describe('Unit Testing middleware functions', () => {
 
 	beforeEach(async () => {
 		req.body = {};
+		req.cookies = {};
 		((res.status as unknown) as jest.SpyInstance).mockClear();
 		((res.json as unknown) as jest.SpyInstance).mockClear();
 		next.mockClear();
@@ -27,10 +28,7 @@ describe('Unit Testing middleware functions', () => {
 			password: 'password123',
 			username: 'John Doe'
 		};
-		const payload = {
-			email: info.email,
-			expires_at: Date.now() + 3600000
-		};
+		const payload = { email: info.email };
 		const token = jwt.sign(payload, String(process.env.SECRET_KEY));
 
 		it('should return an error response if no authorization header exists', async () => {
@@ -53,6 +51,7 @@ describe('Unit Testing middleware functions', () => {
 		});
 
 		it('should return an error response if the token is not valid', async () => {
+			req.cookies.token = '123';
 			req.headers.authorization = 'Bearer 123InvalidToken';
 			await isAuthenticated(req, res, next);
 			expect(res.status).lastCalledWith(401);
@@ -62,32 +61,24 @@ describe('Unit Testing middleware functions', () => {
 			expect(next).toBeCalledTimes(0);
 		});
 
-		it('should return an error response if the token is expired', async () => {
-			const expiredToken = jwt.sign(
-				{
-					...payload,
-					expires_at: Date.now() - 60000
-				},
-				String(process.env.SECRET_KEY)
-			);
-			req.headers.authorization = `Bearer ${expiredToken}`;
+		it('should return an error response if the token is partial', async () => {
+			const partial = token
+				.split('.')
+				.slice(1)
+				.join('.');
+			req.headers.authorization = `Bearer ${partial}`;
 			await isAuthenticated(req, res, next);
 			expect(res.status).lastCalledWith(401);
 			expect(res.json).lastCalledWith({
-				error: 'JWT Token is expired'
+				error: 'Invalid Token'
 			});
 			expect(next).toBeCalledTimes(0);
 		});
 
 		it('should return an error response if the token has a non existent user', async () => {
-			const unknownToken = jwt.sign(
-				{
-					...payload,
-					email: 'unknown@gmail.com'
-				},
-				String(process.env.SECRET_KEY)
-			);
-			req.headers.authorization = `Bearer ${unknownToken}`;
+			const unknownToken = token.split('.');
+			req.cookies.token = unknownToken[0];
+			req.headers.authorization = `Bearer ${[unknownToken[1], unknownToken[2]].join('.')}`;
 			await isAuthenticated(req, res, next);
 			expect(res.status).lastCalledWith(401);
 			expect(res.json).lastCalledWith({
@@ -98,7 +89,11 @@ describe('Unit Testing middleware functions', () => {
 
 		it('should set user in the request object with a valid token', async () => {
 			await context.User.create(context.db, info);
-			req.headers.authorization = `Bearer ${token}`;
+			req.cookies.token = token.split('.')[0];
+			req.headers.authorization = `Bearer ${token
+				.split('.')
+				.slice(1)
+				.join('.')}`;
 			await isAuthenticated(req, res, next);
 			expect(res.status).toBeCalledTimes(0);
 			expect(res.json).toBeCalledTimes(0);

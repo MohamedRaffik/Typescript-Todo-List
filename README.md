@@ -7,12 +7,20 @@
 
 -   /list
 
+    -   GET
+
+        -   [x] getLists - /
+
     -   POST
 
         -   [x] addTodo - /:list/add
-        -   [x] createList - /:list \* Change method
-        -   [ ] moveTodo - /:list/move/:id/ \* Change method
+        -   [x] createList - /:list
+        -   [x] moveTodo - /:list/move/:id/
+        -   [x] renameList - /:list/rename
 
+    -   PUT
+
+        -   [x] updateTodo - /:list/update/:id
 
     -   DELETE
 
@@ -20,15 +28,8 @@
         -   [x] deleteList - /:list/delete
         -   [x] deleteTodo - /:list/delete/:id
 
-    -   PUT
-
-        -   [x] renameList - /:list/rename
-        -   [x] updateTodo - /:list/update/:id
-
-    -   GET
-
-        -   [x] getLists - /
-
--   Add Web Push notifications for app
-
--   [ ] Use web-push with bull on a worker queue to implement cron jobs to send web push notifications
+-   Add integration testing for endpoints
+-   Add job model
+-   Add job info in requests
+-   Add job scheduling using mongodb listener
+-   Add end to end tests

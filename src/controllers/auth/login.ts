@@ -11,7 +11,6 @@ interface LoginBody {
 
 interface LoginResponse {
 	token: string;
-	expires_at: number;
 }
 
 export const controller = (context: Context.Context) => {
@@ -34,12 +33,18 @@ export const controller = (context: Context.Context) => {
 			return res.status(401).json({ error: 'Incorrect email or password' });
 		}
 		const payload: controllerInterfaces.Payload = {
-			email: user.email,
-			expires_at: Date.now() + Number(process.env.JWT_EXPIRATION)
+			email: user.email
 		};
-		const token = jwt.sign(payload, String(process.env.SECRET_KEY));
-		const response: LoginResponse = { token, expires_at: payload.expires_at };
-		return res.status(200).json(response);
+		const token = jwt.sign(payload, String(process.env.SECRET_KEY)).split('.');
+		const response: LoginResponse = { token: [token[1], token[2]].join('.') };
+		return res
+			.cookie('token', token[0], {
+				httpOnly: true,
+				secure: true,
+				maxAge: 1000 * 60 * 60 * 24 * 30
+			})
+			.status(200)
+			.json(response);
 	};
 	return [Login];
 };

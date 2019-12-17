@@ -11,6 +11,7 @@ describe('Unit Testing deleteTodo controller', () => {
 	const res = (new mock.MockResponse() as unknown) as express.Response;
 	jest.spyOn(res, 'status');
 	jest.spyOn(res, 'json');
+	jest.spyOn(res, 'end');
 	const next = jest.fn();
 
 	beforeAll(async () => {
@@ -26,6 +27,7 @@ describe('Unit Testing deleteTodo controller', () => {
 		req.body = {};
 		((res.status as unknown) as jest.SpyInstance).mockClear();
 		((res.json as unknown) as jest.SpyInstance).mockClear();
+		((res.end as unknown) as jest.SpyInstance).mockClear();
 	});
 
 	it('should return an error response if the list does not exist', async () => {
@@ -52,6 +54,6 @@ describe('Unit Testing deleteTodo controller', () => {
 		await user.addTodo('Master', { title: 'A', notes: [], created: Date.now() });
 		await deleteTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
-		expect(res.json).toBeCalledTimes(0);
+		expect(res.end).toBeCalled();
 	});
 });

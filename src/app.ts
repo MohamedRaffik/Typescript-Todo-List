@@ -7,13 +7,13 @@ import * as API from './routes';
 
 const PORT = process.env.PORT || 5000;
 
-export const StartServer = async (): Promise<[express.Application, http.Server]> => {
+export const start = async (): Promise<[http.Server, Context.Context]> => {
 	const app = express.default();
 	const context = await Context.createContext();
 
 	app.use(express.json());
 	app.use(compression.default());
-	app.use(cookieParser.default());
+	app.use(cookieParser.default(process.env.SECRET_KEY));
 	app.use('/api', API.default(context));
 
 	app.get('/', (req: express.Request, res: express.Response) => {
@@ -23,7 +23,7 @@ export const StartServer = async (): Promise<[express.Application, http.Server]>
 	return await new Promise(resolve => {
 		const httpServer = app.listen(PORT, () => {
 			httpServer.on('close', async () => await context.client.close());
-			resolve([app, httpServer]);
+			resolve([httpServer, context]);
 		});
 	});
 };

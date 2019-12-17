@@ -12,7 +12,6 @@ interface RegisterBody {
 
 interface RegisterResponse {
 	token: string;
-	expires_at: number;
 }
 
 export const controller = (context: Context.Context) => {
@@ -31,12 +30,20 @@ export const controller = (context: Context.Context) => {
 		try {
 			const user = await User.create(db, { email, password, username });
 			const payload: controllerInterfaces.Payload = {
-				email: user.email,
-				expires_at: Date.now() + Number(process.env.JWT_EXPIRATION)
+				email: user.email
 			};
-			const token = jwt.sign(payload, String(process.env.SECRET_KEY));
-			const response: RegisterResponse = { token, expires_at: payload.expires_at };
-			return res.status(200).json(response);
+			const token = jwt.sign(payload, String(process.env.SECRET_KEY)).split('.');
+			const response: RegisterResponse = {
+				token: [token[1], token[2]].join('.')
+			};
+			return res
+				.cookie('token', token[0], {
+					httpOnly: true,
+					secure: true,
+					maxAge: 1000 * 60 * 60 * 24 * 30
+				})
+				.status(200)
+				.json(response);
 		} catch (err) {
 			// console.error(err);
 			return res.status(400).json({ error: err.message });

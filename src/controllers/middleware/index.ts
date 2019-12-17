@@ -18,14 +18,14 @@ export const create = (context: Context.Context) => {
 			if (AuthType !== 'Bearer') {
 				return res.status(401).json({ error: 'Incorrect Token Type, must be Bearer' });
 			}
+			if (!('token' in req.cookies)) {
+				return res.status(401).json({ error: 'Invalid Token' });
+			}
 			try {
 				const payload = jwt.verify(
-					token,
+					[req.cookies['token'], token].join('.'),
 					String(process.env.SECRET_KEY)
 				) as controllersInterface.Payload;
-				if (payload.expires_at < Date.now()) {
-					return res.status(401).json({ error: 'JWT Token is expired' });
-				}
 				const user = await User.get(db, payload.email);
 				if (!user) {
 					return res.status(401).json({ error: 'Account not Found' });

@@ -5,7 +5,6 @@ export { ListControllers as List } from './list';
 
 export interface Payload {
 	email: string;
-	expires_at: number;
 }
 
 declare global {

@@ -10,6 +10,7 @@ describe('Unit Testing Register controller', () => {
 	const res = (new mock.MockResponse() as unknown) as express.Response;
 	jest.spyOn(res, 'status');
 	jest.spyOn(res, 'json');
+	jest.spyOn(res, 'cookie');
 	const { db } = context;
 
 	beforeEach(async () => {
@@ -17,6 +18,7 @@ describe('Unit Testing Register controller', () => {
 		db.dropCollection('Users');
 		((res.status as unknown) as jest.SpyInstance).mockClear();
 		((res.json as unknown) as jest.SpyInstance).mockClear();
+		((res.cookie as unknown) as jest.SpyInstance).mockClear();
 	});
 
 	it('should return an error if there is a missing email, username, or password', async () => {
@@ -76,9 +78,12 @@ describe('Unit Testing Register controller', () => {
 			password: 'password123'
 		};
 		await Register(req, res);
-		expect(res.status).lastCalledWith(200);
-		expect(res.json).lastCalledWith(
-			expect.objectContaining({ token: expect.any(String), expires_at: expect.any(Number) })
+		expect(res.cookie).lastCalledWith(
+			'token',
+			expect.any(String),
+			expect.objectContaining({ httpOnly: true, secure: true, maxAge: expect.any(Number) })
 		);
+		expect(res.status).lastCalledWith(200);
+		expect(res.json).lastCalledWith(expect.objectContaining({ token: expect.any(String) }));
 	});
 });

@@ -8,6 +8,12 @@ export class MockResponse {
 	public json(object: object) {
 		return;
 	}
+	public cookie() {
+		return this;
+	}
+	public end() {
+		return;
+	}
 }
 
 class Database {

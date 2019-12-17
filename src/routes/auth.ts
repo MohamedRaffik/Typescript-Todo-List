@@ -6,7 +6,7 @@ export const Router = (context: Context.Context) => {
 	const AuthRouter = express.Router();
 	const { Auth } = controllers;
 
-	AuthRouter.get('/login', Auth.Login(context));
+	AuthRouter.post('/login', Auth.Login(context));
 	AuthRouter.post('/register', Auth.Register(context));
 
 	return AuthRouter;

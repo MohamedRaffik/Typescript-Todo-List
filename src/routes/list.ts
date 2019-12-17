@@ -11,8 +11,8 @@ export const Router = (context: Context.Context) => {
 	ListRouter.post('/:list/add', List.addTodo(context));
 	ListRouter.post('/:list', List.createList(context));
 	ListRouter.post('/:list/move/:id', List.moveTodo(context));
+	ListRouter.post('/:list/rename', List.renameList(context));
 
-	ListRouter.put('/:list/rename', List.renameList(context));
 	ListRouter.put('/:list/:id', List.updateTodo(context));
 
 	ListRouter.delete('/:list/update', List.clearList(context));

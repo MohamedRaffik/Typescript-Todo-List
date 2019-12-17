@@ -1,6 +1,6 @@
 import * as mongodb from 'mongodb';
-import * as Database from '../../../models/database';
-import * as User from '../../../models/user';
+import * as Database from '../../models/database';
+import * as User from '../../models/user';
 
 describe('Unit Testing User Class', () => {
 	let db: mongodb.Db;
@@ -18,15 +18,15 @@ describe('Unit Testing User Class', () => {
 		try {
 			await db.dropCollection('Users');
 		} catch (err) {
-			// tslint:disable-next-line:no-empty
+			// tslint:disable-next-line:no-empty-line
 		}
 	});
 
 	afterAll(async () => {
 		try {
-			db.dropCollection('Users');
+			await db.dropCollection('Users');
 		} catch (err) {
-			// tslint:disable-next-line:no-empty
+			// tslint:disable-next-line:no-empty-line
 		}
 		await client.close();
 	});
