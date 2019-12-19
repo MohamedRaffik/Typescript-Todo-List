@@ -27,7 +27,7 @@ describe('Unit Testing updateTodo controller', () => {
 			username: 'John Doe',
 			password: 'password123'
 		});
-		await user.addTodo('Master', todo);
+		await user.addTodo('Main', todo);
 		req.user = user;
 		((res.status as unknown) as jest.SpyInstance).mockClear();
 		((res.json as unknown) as jest.SpyInstance).mockClear();
@@ -35,7 +35,7 @@ describe('Unit Testing updateTodo controller', () => {
 
 	it('should return an error if there are invalid types in the body of the request', async () => {
 		req.body = { title: 10, notes: [10], completed: 0 };
-		req.params = { list: 'Master', id: '100' };
+		req.params = { list: 'Main', id: '100' };
 		await updateTodo(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
@@ -56,17 +56,17 @@ describe('Unit Testing updateTodo controller', () => {
 
 	it('should return an error response if the item does not exist', async () => {
 		req.body = { title: 'Updated Item' };
-		req.params = { list: 'Master', id: '1' };
+		req.params = { list: 'Main', id: '1' };
 		await updateTodo(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
-			error: "Item does not exist in 'Master' list"
+			error: "Item does not exist in 'Main' list"
 		});
 	});
 
 	it('should return a successful response with the updated item', async () => {
 		req.body = { title: 'Updated Item', completed: true };
-		req.params = { list: 'Master', id: '0' };
+		req.params = { list: 'Main', id: '0' };
 		await updateTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({
@@ -79,7 +79,7 @@ describe('Unit Testing updateTodo controller', () => {
 
 	it('should return the unchanged item if there are no values that need to be updated', async () => {
 		req.body = {};
-		req.params = { list: 'Master', id: '0' };
+		req.params = { list: 'Main', id: '0' };
 		await updateTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({

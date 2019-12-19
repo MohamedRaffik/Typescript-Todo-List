@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testing App Component should render 1`] = `
+Array [
+  <div>
+    <div>
+      <p>
+        TodoLists
+      </p>
+      <div>
+        <p>
+          Login
+        </p>
+        <p>
+          Register
+        </p>
+      </div>
+    </div>
+  </div>,
+  <div>
+    <div>
+      <div>
+        <a
+          href="/"
+          onClick={[Function]}
+        >
+          Main
+        </a>
+        <a
+          href="/Test"
+          onClick={[Function]}
+        >
+          Test
+        </a>
+      </div>
+      <div>
+        <button>
+          &lt;&lt;
+        </button>
+        <button>
+          &lt;
+        </button>
+        <button
+          style={
+            Object {
+              "fontWeight": "bold",
+            }
+          }
+        >
+          1
+        </button>
+        <button>
+          &gt;
+        </button>
+        <button>
+          &gt;&gt;
+        </button>
+      </div>
+    </div>
+    <div>
+      <div>
+        Main
+      </div>
+    </div>
+  </div>,
+]
+`;

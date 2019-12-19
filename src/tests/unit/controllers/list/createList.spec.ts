@@ -31,11 +31,11 @@ describe('Unit Testing createList controller', () => {
 	});
 
 	it('should return an error response if the list to be created already exists', async () => {
-		req.params = { list: 'Master' };
+		req.params = { list: 'Main' };
 		await createList(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
-			error: "'Master' list already exists"
+			error: "'Main' list already exists"
 		});
 	});
 

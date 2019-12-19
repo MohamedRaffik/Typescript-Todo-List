@@ -39,12 +39,12 @@ describe('Unit Testing deleteList controller', () => {
 		});
 	});
 
-	it('should return an error if the Master is attempted to be deleted', async () => {
-		req.params = { list: 'Master' };
+	it('should return an error if the Main is attempted to be deleted', async () => {
+		req.params = { list: 'Main' };
 		await deleteList(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
-			error: "Cannot delete 'Master' list"
+			error: "Cannot delete 'Main' list"
 		});
 	});
 

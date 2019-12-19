@@ -62,12 +62,12 @@ describe('Unit Testing User Class', () => {
 		const user = await User.UserClass.get(db, info.email);
 		expect(user).toBeInstanceOf(User.UserClass);
 		if (user) {
-			expect(user.lists.Master.length).toEqual(0);
-			await user.addTodo('Master', todo);
+			expect(user.lists.Main.length).toEqual(0);
+			await user.addTodo('Main', todo);
 			const updatedUser = await User.UserClass.get(db, info.email);
 			expect(updatedUser).toBeInstanceOf(User.UserClass);
 			if (updatedUser) {
-				expect(updatedUser.lists.Master.length).toEqual(1);
+				expect(updatedUser.lists.Main.length).toEqual(1);
 			}
 		}
 	});

@@ -1,0 +1,8 @@
+.reset-spacing {
+	margin: 0;
+	padding: 0;
+}
+
+@function secondary-color($r, $g, $b) {
+	@return rgb(173 + $r, 216 + $g, 230 + $b);
+}

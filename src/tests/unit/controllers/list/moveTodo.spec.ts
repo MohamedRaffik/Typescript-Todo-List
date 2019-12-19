@@ -28,7 +28,7 @@ describe('Unit Testing moveTodo controller', () => {
 	});
 
 	it('should return an error response if there are invalid values/types for newList and newId', async () => {
-		req.params = { list: 'Master', id: '10' };
+		req.params = { list: 'Main', id: '10' };
 		req.body = { newList: 10 };
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(400);
@@ -39,7 +39,7 @@ describe('Unit Testing moveTodo controller', () => {
 
 	it('should return an error response if the newList or list does not exist', async () => {
 		req.params = { list: 'TestList', id: '0' };
-		req.body = { newList: 'Master', newId: 0 };
+		req.body = { newList: 'Main', newId: 0 };
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
@@ -47,8 +47,8 @@ describe('Unit Testing moveTodo controller', () => {
 		});
 
 		const user = req.user as User.UserClass;
-		await user.addTodo('Master', todo);
-		req.params = { list: 'Master', id: '0' };
+		await user.addTodo('Main', todo);
+		req.params = { list: 'Main', id: '0' };
 		req.body = { newList: 'TestList', newId: 0 };
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(400);
@@ -58,51 +58,51 @@ describe('Unit Testing moveTodo controller', () => {
 	});
 
 	it('should return an error response if the item does not exist in the list', async () => {
-		req.params = { list: 'Master', id: '0' };
-		req.body = { newList: 'Master', newId: 0 };
+		req.params = { list: 'Main', id: '0' };
+		req.body = { newList: 'Main', newId: 0 };
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
-			error: "Item does not exist in 'Master' list"
+			error: "Item does not exist in 'Main' list"
 		});
 	});
 
 	it('should return an error response if the newId position is not a valid number', async () => {
 		const user = req.user as User.UserClass;
-		await user.addTodo('Master', todo);
-		req.params = { list: 'Master', id: '0' };
-		req.body = { newList: 'Master', newId: -1 };
+		await user.addTodo('Main', todo);
+		req.params = { list: 'Main', id: '0' };
+		req.body = { newList: 'Main', newId: -1 };
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
-			error: "Cannot move item to the 'Master' list at position -1"
+			error: "Cannot move item to the 'Main' list at position -1"
 		});
 	});
 
 	it('should return a response with the updated lists after moving a todo item between lists', async () => {
 		const user = req.user as User.UserClass;
-		await user.addTodo('Master', { ...todo, title: 'Master' });
-		await user.addTodo('Master', { ...todo, title: 'Master1' });
-		await user.addTodo('Master', { ...todo, title: 'Master2' });
+		await user.addTodo('Main', { ...todo, title: 'Main' });
+		await user.addTodo('Main', { ...todo, title: 'Main1' });
+		await user.addTodo('Main', { ...todo, title: 'Main2' });
 		await user.addTodo('TestList', { ...todo, title: 'TestList' });
 		await user.addTodo('TestList', { ...todo, title: 'TestList1' });
 		await user.addTodo('TestList', { ...todo, title: 'TestList2' });
-		req.params = { list: 'Master', id: '1' };
+		req.params = { list: 'Main', id: '1' };
 		req.body = { newList: 'TestList', newId: 1 };
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({
-			Master: [
+			Main: [
 				{
 					...todo,
 					id: 0,
-					title: 'Master',
+					title: 'Main',
 					completed: false
 				},
 				{
 					...todo,
 					id: 1,
-					title: 'Master2',
+					title: 'Main2',
 					completed: false
 				}
 			],
@@ -116,7 +116,7 @@ describe('Unit Testing moveTodo controller', () => {
 				{
 					...todo,
 					id: 1,
-					title: 'Master1',
+					title: 'Main1',
 					completed: false
 				},
 				{
@@ -137,31 +137,31 @@ describe('Unit Testing moveTodo controller', () => {
 
 	it('should return a response with the updated list after moving a todo item within a list', async () => {
 		const user = req.user as User.UserClass;
-		await user.addTodo('Master', { ...todo, title: 'Master' });
-		await user.addTodo('Master', { ...todo, title: 'Master1' });
-		await user.addTodo('Master', { ...todo, title: 'Master2' });
-		req.params = { list: 'Master', id: '2' };
-		req.body = { newList: 'Master', newId: 0 };
+		await user.addTodo('Main', { ...todo, title: 'Main' });
+		await user.addTodo('Main', { ...todo, title: 'Main1' });
+		await user.addTodo('Main', { ...todo, title: 'Main2' });
+		req.params = { list: 'Main', id: '2' };
+		req.body = { newList: 'Main', newId: 0 };
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({
-			Master: [
+			Main: [
 				{
 					...todo,
 					id: 0,
-					title: 'Master2',
+					title: 'Main2',
 					completed: false
 				},
 				{
 					...todo,
 					id: 1,
-					title: 'Master',
+					title: 'Main',
 					completed: false
 				},
 				{
 					...todo,
 					id: 2,
-					title: 'Master1',
+					title: 'Main1',
 					completed: false
 				}
 			]
@@ -170,31 +170,31 @@ describe('Unit Testing moveTodo controller', () => {
 
 	it('should return a response with the updated list after moving the item to a position greater than the list size to the end of the list', async () => {
 		const user = req.user as User.UserClass;
-		await user.addTodo('Master', { ...todo, title: 'Master' });
-		await user.addTodo('Master', { ...todo, title: 'Master1' });
-		await user.addTodo('Master', { ...todo, title: 'Master2' });
-		req.params = { list: 'Master', id: '0' };
-		req.body = { newList: 'Master', newId: 20 };
+		await user.addTodo('Main', { ...todo, title: 'Main' });
+		await user.addTodo('Main', { ...todo, title: 'Main1' });
+		await user.addTodo('Main', { ...todo, title: 'Main2' });
+		req.params = { list: 'Main', id: '0' };
+		req.body = { newList: 'Main', newId: 20 };
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({
-			Master: [
+			Main: [
 				{
 					...todo,
 					id: 0,
-					title: 'Master1',
+					title: 'Main1',
 					completed: false
 				},
 				{
 					...todo,
 					id: 1,
-					title: 'Master2',
+					title: 'Main2',
 					completed: false
 				},
 				{
 					...todo,
 					id: 2,
-					title: 'Master',
+					title: 'Main',
 					completed: false
 				}
 			]

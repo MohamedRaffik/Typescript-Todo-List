@@ -61,14 +61,14 @@ describe('Unit Testing renameList controller', () => {
 	});
 
 	it('should return an error response if the newListName already exists', async () => {
-		req.body = { newListName: 'Master' };
+		req.body = { newListName: 'Main' };
 		req.params = { list: 'TestList' };
 		const user = req.user as User.UserClass;
 		await user.createList('TestList');
 		await renameList(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
-			error: "Cannot rename 'TestList' list to 'Master', 'Master' list already exists"
+			error: "Cannot rename 'TestList' list to 'Main', 'Main' list already exists"
 		});
 	});
 

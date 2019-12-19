@@ -10,7 +10,7 @@ export interface Todo {
 }
 
 export interface TodoList {
-	Master: Todo[];
+	Main: Todo[];
 	[list: string]: Todo[];
 }
 
@@ -65,7 +65,7 @@ export class UserClass {
 		this.email = info.email;
 		this.username = info.username;
 		this.password = info.password;
-		this.lists = info.lists || { Master: [] };
+		this.lists = info.lists || { Main: [] };
 		this.db = db;
 	}
 
@@ -136,8 +136,8 @@ export class UserClass {
 
 	public async deleteList(list: string) {
 		this.validOperation(list);
-		if (list === 'Master') {
-			throw Error("Cannot delete 'Master' list");
+		if (list === 'Main') {
+			throw Error("Cannot delete 'Main' list");
 		}
 		delete this.lists[list];
 		await this.update({ lists: this.lists });
@@ -151,8 +151,8 @@ export class UserClass {
 
 	public async renameList(list: string, newList: string) {
 		this.validOperation(list);
-		if (list === 'Master') {
-			throw Error("Cannot rename 'Master' list");
+		if (list === 'Main') {
+			throw Error("Cannot rename 'Main' list");
 		}
 		if (newList in this.lists) {
 			throw Error(

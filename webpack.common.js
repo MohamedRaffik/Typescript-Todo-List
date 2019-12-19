@@ -3,7 +3,10 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-	entry: './client/index.ts',
+	entry: './client/src/index.tsx',
+	resolve: {
+		extensions: ['.tsx', '.ts', '.jsx', '.js']
+	},
 	output: {
 		path: path.resolve('client/dist'),
 		filename: '[name].bundle.js',

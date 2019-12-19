@@ -30,7 +30,7 @@ describe('Unit Testing addTodo controller', () => {
 
 	it('should return an error response if the fields are invalid', async () => {
 		req.body = { title: 'My First Item' };
-		req.params = { list: 'Master' };
+		req.params = { list: 'Main' };
 		await addTodo(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({ error: "'notes' is not specified" });

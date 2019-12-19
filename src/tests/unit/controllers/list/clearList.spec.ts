@@ -38,11 +38,11 @@ describe('Unit Testing clearList controller', () => {
 	});
 
 	it('should return the updated list with a successful response', async () => {
-		req.params = { list: 'Master' };
+		req.params = { list: 'Main' };
 		await clearList(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({
-			Master: []
+			Main: []
 		});
 	});
 });

@@ -40,18 +40,18 @@ describe('Unit Testing deleteTodo controller', () => {
 	});
 
 	it('should return an error message if the item does not exist', async () => {
-		req.params = { list: 'Master', id: String(100) };
+		req.params = { list: 'Main', id: String(100) };
 		await deleteTodo(req, res, next);
 		expect(res.status).lastCalledWith(400);
 		expect(res.json).lastCalledWith({
-			error: "Item does not exist in 'Master' list"
+			error: "Item does not exist in 'Main' list"
 		});
 	});
 
 	it('should return a successful response if the item was successfully deleted', async () => {
-		req.params = { list: 'Master', id: String(0) };
+		req.params = { list: 'Main', id: String(0) };
 		const user = req.user as User.UserClass;
-		await user.addTodo('Master', { title: 'A', notes: [], created: Date.now() });
+		await user.addTodo('Main', { title: 'A', notes: [], created: Date.now() });
 		await deleteTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.end).toBeCalled();

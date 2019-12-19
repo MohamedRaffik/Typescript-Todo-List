@@ -75,7 +75,7 @@ describe('Integration Testing Endpoints', () => {
 		it('should GET getLists at /', async () => {
 			const response = await utils.getLists(server, token);
 			expect(JSON.parse(response.text)).toEqual({
-				Master: []
+				Main: []
 			});
 		});
 
@@ -84,7 +84,7 @@ describe('Integration Testing Endpoints', () => {
 			await utils.createList(server, 'Appointments', token);
 			const response = await utils.getLists(server, token);
 			expect(JSON.parse(response.text)).toEqual({
-				Master: [],
+				Main: [],
 				Events: [],
 				Appointments: []
 			});
@@ -135,7 +135,7 @@ describe('Integration Testing Endpoints', () => {
 			await utils.renameList(server, 'Appointments', { newListName: 'Doctor' }, token);
 			const response = await utils.getLists(server, token);
 			expect(JSON.parse(response.text)).toEqual({
-				Master: [],
+				Main: [],
 				Events: [],
 				Doctor: [
 					{
@@ -170,7 +170,7 @@ describe('Integration Testing Endpoints', () => {
 			await utils.deleteList(server, 'Events', token);
 			const response = await utils.getLists(server, token);
 			expect(JSON.parse(response.text)).toEqual({
-				Master: [],
+				Main: [],
 				Doctor: [
 					{
 						title: 'Doctors Appointment',
@@ -186,7 +186,7 @@ describe('Integration Testing Endpoints', () => {
 		it('should DELETE deleteTodo at /:list/delete/:id', async () => {
 			await utils.addTodo(
 				server,
-				'Master',
+				'Main',
 				{
 					title: 'Finish Writing Tests',
 					notes: ['Maybe add head endpoints'],
@@ -194,10 +194,10 @@ describe('Integration Testing Endpoints', () => {
 				},
 				token
 			);
-			await utils.deleteTodo(server, 'Master', 0, token);
+			await utils.deleteTodo(server, 'Main', 0, token);
 			const response = await utils.getLists(server, token);
 			expect(JSON.parse(response.text)).toEqual({
-				Master: [],
+				Main: [],
 				Doctor: [
 					{
 						title: 'Doctors Appointment',
@@ -214,7 +214,7 @@ describe('Integration Testing Endpoints', () => {
 			await utils.clearList(server, 'Doctor', token);
 			const response = await utils.getLists(server, token);
 			expect(JSON.parse(response.text)).toEqual({
-				Master: [],
+				Main: [],
 				Doctor: []
 			});
 		});

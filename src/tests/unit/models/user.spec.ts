@@ -21,22 +21,22 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing createList', () => {
 		it('should throw an error if the list to be created already exists', async () => {
-			await expect(user.createList('Master')).rejects.toThrow("'Master' list already exists");
+			await expect(user.createList('Main')).rejects.toThrow("'Main' list already exists");
 		});
 
 		it('should create a list if it does not exist', async () => {
-			expect(user.lists).toEqual({ Master: [] });
+			expect(user.lists).toEqual({ Main: [] });
 			await user.createList('Cool');
-			expect(user.lists).toEqual({ Master: [], Cool: [] });
+			expect(user.lists).toEqual({ Main: [], Cool: [] });
 		});
 	});
 
 	describe('testing addTodo', () => {
 		it('should add a todo item to the list and create that list if it does not exist', async () => {
-			expect(user.lists).toEqual({ Master: [] });
+			expect(user.lists).toEqual({ Main: [] });
 			await user.addTodo('School', todo);
 			expect(user.lists).toEqual({
-				Master: [],
+				Main: [],
 				School: [{ ...todo, id: 0, completed: false }]
 			});
 		});
@@ -73,8 +73,8 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing deleteTodo', () => {
 		it('should throw an error if the todo item does not exist', async () => {
-			await expect(user.deleteTodo('Master', 100)).rejects.toThrow(
-				"Item does not exist in 'Master' list"
+			await expect(user.deleteTodo('Main', 100)).rejects.toThrow(
+				"Item does not exist in 'Main' list"
 			);
 		});
 
@@ -87,12 +87,12 @@ describe('Unit Testing User Class', () => {
 	});
 
 	describe('testing deleteList', () => {
-		it('should throw an error when trying to delete the master list', async () => {
-			expect(user.lists).toHaveProperty('Master');
-			await expect(user.deleteList('Master')).rejects.toThrow("Cannot delete 'Master' list");
+		it('should throw an error when trying to delete the Main list', async () => {
+			expect(user.lists).toHaveProperty('Main');
+			await expect(user.deleteList('Main')).rejects.toThrow("Cannot delete 'Main' list");
 		});
 
-		it('should delete a list from the user lists if it is not the master list', async () => {
+		it('should delete a list from the user lists if it is not the Main list', async () => {
 			await user.createList('School');
 			expect(user.lists).toHaveProperty('School');
 			await user.deleteList('School');
@@ -106,10 +106,10 @@ describe('Unit Testing User Class', () => {
 		});
 
 		it('should clear the list of all todo items', async () => {
-			await user.addTodo('Master', todo);
-			expect(user.lists['Master'].length).toEqual(1);
-			await user.clearList('Master');
-			expect(user.lists['Master'].length).toEqual(0);
+			await user.addTodo('Main', todo);
+			expect(user.lists['Main'].length).toEqual(1);
+			await user.clearList('Main');
+			expect(user.lists['Main'].length).toEqual(0);
 		});
 	});
 
@@ -123,14 +123,14 @@ describe('Unit Testing User Class', () => {
 		it('should throw an error if the newList already exists', async () => {
 			await user.addTodo('TestList', todo);
 			expect(user.lists['TestList'].length).toEqual(1);
-			await expect(user.renameList('TestList', 'Master')).rejects.toThrow(
-				"Cannot rename 'TestList' list to 'Master', 'Master' list already exists"
+			await expect(user.renameList('TestList', 'Main')).rejects.toThrow(
+				"Cannot rename 'TestList' list to 'Main', 'Main' list already exists"
 			);
 		});
 
-		it('should throw an error if the list to be renamed is the Master list', async () => {
-			await expect(user.renameList('Master', 'NewMaster')).rejects.toThrow(
-				"Cannot rename 'Master' list"
+		it('should throw an error if the list to be renamed is the Main list', async () => {
+			await expect(user.renameList('Main', 'NewMain')).rejects.toThrow(
+				"Cannot rename 'Main' list"
 			);
 		});
 
@@ -146,21 +146,21 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing moveTodo', () => {
 		it('should throw an error if the list to move an item from does not exist', async () => {
-			await expect(user.moveTodo('TestList', 0, 'Master', 0)).rejects.toThrow(
+			await expect(user.moveTodo('TestList', 0, 'Main', 0)).rejects.toThrow(
 				"'TestList' list does not exist"
 			);
 		});
 
 		it('should throw an error if the item to be moved does not exist in the list', async () => {
 			await user.createList('TestList');
-			await expect(user.moveTodo('TestList', 0, 'Master', 0)).rejects.toThrow(
+			await expect(user.moveTodo('TestList', 0, 'Main', 0)).rejects.toThrow(
 				"Item does not exist in 'TestList' list"
 			);
 		});
 
 		it('should throw an error if the newId is a negative number', async () => {
 			await user.createList('TestList');
-			await expect(user.moveTodo('TestList', 0, 'Master', -1)).rejects.toThrow(
+			await expect(user.moveTodo('TestList', 0, 'Main', -1)).rejects.toThrow(
 				"Item does not exist in 'TestList' list"
 			);
 		});
@@ -169,9 +169,9 @@ describe('Unit Testing User Class', () => {
 			await user.addTodo('TestList', todo);
 			await user.addTodo('TestList', { ...todo, title: todo.title + '1' });
 			await user.addTodo('TestList', { ...todo, title: todo.title + '2' });
-			await user.addTodo('Master', { ...todo, title: todo.title + 'master1' });
-			await user.addTodo('Master', { ...todo, title: todo.title + 'master2' });
-			await user.moveTodo('TestList', 1, 'Master', 1);
+			await user.addTodo('Main', { ...todo, title: todo.title + 'Main1' });
+			await user.addTodo('Main', { ...todo, title: todo.title + 'Main2' });
+			await user.moveTodo('TestList', 1, 'Main', 1);
 			expect(user.lists['TestList']).toEqual([
 				{
 					...todo,
@@ -185,10 +185,10 @@ describe('Unit Testing User Class', () => {
 					id: 1
 				}
 			]);
-			expect(user.lists['Master']).toEqual([
+			expect(user.lists['Main']).toEqual([
 				{
 					...todo,
-					title: todo.title + 'master1',
+					title: todo.title + 'Main1',
 					completed: false,
 					id: 0
 				},
@@ -200,7 +200,7 @@ describe('Unit Testing User Class', () => {
 				},
 				{
 					...todo,
-					title: todo.title + 'master2',
+					title: todo.title + 'Main2',
 					completed: false,
 					id: 2
 				}

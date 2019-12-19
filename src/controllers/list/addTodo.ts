@@ -17,7 +17,7 @@ export const controller = (context: Context.Context) => {
 		const body = req.body as AddTodoBody;
 		const { list } = req.params;
 		let error = utils.validateFields(body, {
-			list: { type: 'string', default: 'Master' },
+			list: { type: 'string', default: 'Main' },
 			notes: {},
 			completed: { type: 'boolean', default: false }
 		});
