@@ -13,7 +13,7 @@
 		"build:client": "webpack --config webpack.prod.js",
 		"test:server": "jest --config=jest.config.js",
 		"test:client": "jest --config=client/jest.config.js",
-		"test": "npm run test:server"
+		"test": "npm run test:server && npm run test:client"
 	},
 	"author": "",
 	"license": "ISC",
