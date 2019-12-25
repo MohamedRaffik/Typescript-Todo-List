@@ -21,7 +21,18 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing createList', () => {
 		it('should throw an error if the list to be created already exists', async () => {
-			await expect(user.createList('Main')).rejects.toThrow("'Main' list already exists");
+			await expect(user.createList('Main')).rejects.toThrowError(
+				"'Main' list already exists"
+			);
+		});
+
+		it('should throw and error if the list limit of 50 is reached', async () => {
+			for (let i = 0; i < 49; i++) {
+				await user.createList(`List${i}`);
+			}
+			await expect(user.createList('List that cannot be created')).rejects.toThrowError(
+				'Maximum number of lists reached'
+			);
 		});
 
 		it('should create a list if it does not exist', async () => {
@@ -56,7 +67,7 @@ describe('Unit Testing User Class', () => {
 		it('should throw an error if the list does not exist', async () => {
 			await expect(
 				user.updateTodo('Food', 0, { completed: true, title: 'Updated Item' })
-			).rejects.toThrow("'Food' list does not exist");
+			).rejects.toThrowError("'Food' list does not exist");
 		});
 
 		it('should mark a todo item as completed in the list', async () => {
@@ -73,7 +84,7 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing deleteTodo', () => {
 		it('should throw an error if the todo item does not exist', async () => {
-			await expect(user.deleteTodo('Main', 100)).rejects.toThrow(
+			await expect(user.deleteTodo('Main', 100)).rejects.toThrowError(
 				"Item does not exist in 'Main' list"
 			);
 		});
@@ -89,7 +100,7 @@ describe('Unit Testing User Class', () => {
 	describe('testing deleteList', () => {
 		it('should throw an error when trying to delete the Main list', async () => {
 			expect(user.lists).toHaveProperty('Main');
-			await expect(user.deleteList('Main')).rejects.toThrow("Cannot delete 'Main' list");
+			await expect(user.deleteList('Main')).rejects.toThrowError("Cannot delete 'Main' list");
 		});
 
 		it('should delete a list from the user lists if it is not the Main list', async () => {
@@ -102,7 +113,9 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing clearList', () => {
 		it('should throw an error if the list to be cleared does not exist', async () => {
-			await expect(user.clearList('School')).rejects.toThrow("'School' list does not exist");
+			await expect(user.clearList('School')).rejects.toThrowError(
+				"'School' list does not exist"
+			);
 		});
 
 		it('should clear the list of all todo items', async () => {
@@ -115,7 +128,7 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing renameList', () => {
 		it('should throw an error if the list to be renamed does not exist', async () => {
-			await expect(user.renameList('TestList', 'RenamedList')).rejects.toThrow(
+			await expect(user.renameList('TestList', 'RenamedList')).rejects.toThrowError(
 				"'TestList' list does not exist"
 			);
 		});
@@ -123,13 +136,13 @@ describe('Unit Testing User Class', () => {
 		it('should throw an error if the newList already exists', async () => {
 			await user.addTodo('TestList', todo);
 			expect(user.lists['TestList'].length).toEqual(1);
-			await expect(user.renameList('TestList', 'Main')).rejects.toThrow(
+			await expect(user.renameList('TestList', 'Main')).rejects.toThrowError(
 				"Cannot rename 'TestList' list to 'Main', 'Main' list already exists"
 			);
 		});
 
 		it('should throw an error if the list to be renamed is the Main list', async () => {
-			await expect(user.renameList('Main', 'NewMain')).rejects.toThrow(
+			await expect(user.renameList('Main', 'NewMain')).rejects.toThrowError(
 				"Cannot rename 'Main' list"
 			);
 		});
@@ -146,21 +159,21 @@ describe('Unit Testing User Class', () => {
 
 	describe('testing moveTodo', () => {
 		it('should throw an error if the list to move an item from does not exist', async () => {
-			await expect(user.moveTodo('TestList', 0, 'Main', 0)).rejects.toThrow(
+			await expect(user.moveTodo('TestList', 0, 'Main', 0)).rejects.toThrowError(
 				"'TestList' list does not exist"
 			);
 		});
 
 		it('should throw an error if the item to be moved does not exist in the list', async () => {
 			await user.createList('TestList');
-			await expect(user.moveTodo('TestList', 0, 'Main', 0)).rejects.toThrow(
+			await expect(user.moveTodo('TestList', 0, 'Main', 0)).rejects.toThrowError(
 				"Item does not exist in 'TestList' list"
 			);
 		});
 
 		it('should throw an error if the newId is a negative number', async () => {
 			await user.createList('TestList');
-			await expect(user.moveTodo('TestList', 0, 'Main', -1)).rejects.toThrow(
+			await expect(user.moveTodo('TestList', 0, 'Main', -1)).rejects.toThrowError(
 				"Item does not exist in 'TestList' list"
 			);
 		});

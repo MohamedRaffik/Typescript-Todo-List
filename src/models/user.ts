@@ -85,10 +85,8 @@ export class UserClass {
 	public async addTodo(list: string, todo: Todo) {
 		todo.completed = false;
 		this.validListName(list);
-		try {
+		if (!(list in this.lists)) {
 			await this.createList(list);
-		} catch (err) {
-			// tslint:disable-next-line:no-empty-line
 		}
 		todo.id = this.lists[list].length;
 		this.lists[list].push(todo);
@@ -120,6 +118,7 @@ export class UserClass {
 		}
 		// Reassign newId to the end of the list if it is greater than the list length or to remain itself (splice works with any large value
 		// but to reassign id of the item newId must be resolved)
+		// Added second condition if the newList is the same as the items original list, the newId will be the list length - 1 rather than the list length
 		newId =
 			newId > this.lists[newList].length
 				? list === newList
@@ -145,6 +144,9 @@ export class UserClass {
 	public async createList(list: string) {
 		if (list in this.lists) {
 			throw Error(`'${list}' list already exists`);
+		}
+		if (Object.keys(this.lists).length === 50) {
+			throw Error('Maximum number of lists reached');
 		}
 		this.lists[list] = [];
 		await this.update({ lists: this.lists });

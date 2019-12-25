@@ -48,7 +48,7 @@ describe('Unit Testing User Class', () => {
 			password: 'newpassword',
 			username: 'newname'
 		};
-		await expect(User.UserClass.create(db, newInfo)).rejects.toThrow(RegExp('duplicate'));
+		await expect(User.UserClass.create(db, newInfo)).rejects.toThrowError(RegExp('duplicate'));
 	});
 
 	it('should update user information in the database and be able to retrieve the update document', async () => {

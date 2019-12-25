@@ -39,6 +39,23 @@ describe('Unit Testing createList controller', () => {
 		});
 	});
 
+	it('should return an error response if the list limit is reached', async () => {
+		for (let i = 0; i < 49; i++) {
+			req.params = { list: `List${i}` };
+			await createList(req, res, next);
+		}
+		req.params = { list: 'Overlimit' };
+		await createList(req, res, next);
+		expect(res.status).lastCalledWith(400);
+		expect(res.json).lastCalledWith({
+			error: 'Maximum number of lists reached'
+		});
+		// Reset user list instance to not affect other test
+		if (req.user) {
+			req.user.lists = { Main: [] };
+		}
+	});
+
 	it('should return with a successful response after creating the list', async () => {
 		req.params = { list: 'NewList' };
 		await createList(req, res, next);
