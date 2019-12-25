@@ -7,6 +7,7 @@ export const Router = (context: Context.Context) => {
 	const { List } = controllers;
 
 	ListRouter.get('/', List.getLists(context));
+	ListRouter.get('/:list/:page', List.getList(context));
 
 	ListRouter.post('/:list/add', List.addTodo(context));
 	ListRouter.post('/:list', List.createList(context));

@@ -39,12 +39,11 @@ export const controller = (context: Context.Context) => {
 			return res.status(400).json({ error: error.join(', ') });
 		}
 		try {
-			await user.updateTodo(list, Number(id), {
+			const response: User.Todo = await user.updateTodo(list, Number(id), {
 				title: body.title,
 				notes: body.notes,
 				completed: body.completed
 			});
-			const response: User.Todo = user.lists[list][id];
 			return res.status(200).json(response);
 		} catch (err) {
 			return res.status(400).json({ error: err.message });

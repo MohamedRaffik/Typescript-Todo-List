@@ -79,7 +79,7 @@ describe('Unit Testing moveTodo controller', () => {
 		});
 	});
 
-	it('should return a response with the updated lists after moving a todo item between lists', async () => {
+	it('should return a response with the updated todo item when moving an item between lists', async () => {
 		const user = req.user as User.UserClass;
 		await user.addTodo('Main', { ...todo, title: 'Main' });
 		await user.addTodo('Main', { ...todo, title: 'Main1' });
@@ -92,50 +92,14 @@ describe('Unit Testing moveTodo controller', () => {
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({
-			Main: [
-				{
-					...todo,
-					id: 0,
-					title: 'Main',
-					completed: false
-				},
-				{
-					...todo,
-					id: 1,
-					title: 'Main2',
-					completed: false
-				}
-			],
-			TestList: [
-				{
-					...todo,
-					id: 0,
-					title: 'TestList',
-					completed: false
-				},
-				{
-					...todo,
-					id: 1,
-					title: 'Main1',
-					completed: false
-				},
-				{
-					...todo,
-					id: 2,
-					title: 'TestList1',
-					completed: false
-				},
-				{
-					...todo,
-					id: 3,
-					title: 'TestList2',
-					completed: false
-				}
-			]
+			...todo,
+			id: 1,
+			title: 'Main1',
+			completed: false
 		});
 	});
 
-	it('should return a response with the updated list after moving a todo item within a list', async () => {
+	it('should return a response with the updated todo item after moving a todo item within a list', async () => {
 		const user = req.user as User.UserClass;
 		await user.addTodo('Main', { ...todo, title: 'Main' });
 		await user.addTodo('Main', { ...todo, title: 'Main1' });
@@ -145,30 +109,14 @@ describe('Unit Testing moveTodo controller', () => {
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({
-			Main: [
-				{
-					...todo,
-					id: 0,
-					title: 'Main2',
-					completed: false
-				},
-				{
-					...todo,
-					id: 1,
-					title: 'Main',
-					completed: false
-				},
-				{
-					...todo,
-					id: 2,
-					title: 'Main1',
-					completed: false
-				}
-			]
+			...todo,
+			id: 0,
+			title: 'Main2',
+			completed: false
 		});
 	});
 
-	it('should return a response with the updated list after moving the item to a position greater than the list size to the end of the list', async () => {
+	it('should return a response with the updated todo item after moving the item to a position greater than the list size to the end of the list', async () => {
 		const user = req.user as User.UserClass;
 		await user.addTodo('Main', { ...todo, title: 'Main' });
 		await user.addTodo('Main', { ...todo, title: 'Main1' });
@@ -178,26 +126,10 @@ describe('Unit Testing moveTodo controller', () => {
 		await moveTodo(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({
-			Main: [
-				{
-					...todo,
-					id: 0,
-					title: 'Main1',
-					completed: false
-				},
-				{
-					...todo,
-					id: 1,
-					title: 'Main2',
-					completed: false
-				},
-				{
-					...todo,
-					id: 2,
-					title: 'Main',
-					completed: false
-				}
-			]
+			...todo,
+			id: 2,
+			title: 'Main',
+			completed: false
 		});
 	});
 });

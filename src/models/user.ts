@@ -33,6 +33,15 @@ export interface UpdateTodo {
 	completed?: boolean;
 }
 
+export interface ListPage {
+	items: Todo[];
+	pages: number;
+}
+
+export interface ListPages {
+	[list: string]: ListPage;
+}
+
 export class UserClass {
 	public static get = async (db: mongodb.Db, email: string) => {
 		const doc = await db.collection('Users').findOne({ _id: email });
@@ -100,6 +109,7 @@ export class UserClass {
 			}
 		});
 		await this.update({ lists: this.lists });
+		return this.lists[list][id];
 	}
 
 	public async moveTodo(list: string, id: number, newList: string, newId: number) {
@@ -110,7 +120,12 @@ export class UserClass {
 		}
 		// Reassign newId to the end of the list if it is greater than the list length or to remain itself (splice works with any large value
 		// but to reassign id of the item newId must be resolved)
-		newId = newId > this.lists[newList].length ? this.lists[newList].length : newId;
+		newId =
+			newId > this.lists[newList].length
+				? list === newList
+					? this.lists[newList].length - 1
+					: this.lists[newList].length
+				: newId;
 		const [item] = this.lists[list].splice(id, 1);
 		item.id = newId;
 		this.lists[newList].splice(newId, 0, item);
@@ -124,6 +139,7 @@ export class UserClass {
 			}
 		}
 		await this.update({ lists: this.lists });
+		return this.lists[newList][newId];
 	}
 
 	public async createList(list: string) {
@@ -165,6 +181,31 @@ export class UserClass {
 		await this.createList(newList);
 		this.lists[newList] = oldList;
 		await this.update({ lists: this.lists });
+	}
+
+	public getList(list: string, page: number): ListPage {
+		this.validOperation(list);
+		if (page <= 0) {
+			throw Error('Invalid Page Number, must be greater than 0');
+		}
+		if (page > this.getTotalPages(list)) {
+			throw Error(`'${list}' list has no more Todo Items`);
+		}
+		return {
+			items: this.lists[list].slice((page - 1) * 25, page * 25),
+			pages: this.getTotalPages(list)
+		};
+	}
+
+	public getLists(): ListPages {
+		return Object.keys(this.lists).reduce((prev, curr) => {
+			prev[curr] = this.getList(curr, 1);
+			return prev;
+		}, {});
+	}
+
+	private getTotalPages(list: string) {
+		return Math.floor(this.lists[list].length / 25) + 1;
 	}
 
 	private validOperation(list: string, id?: number) {

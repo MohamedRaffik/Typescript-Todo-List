@@ -213,38 +213,52 @@ describe('Unit Testing User Class', () => {
 			await user.addTodo('TestList', { ...todo, title: todo.title + '2' });
 			await user.addTodo('TestList', { ...todo, title: todo.title + '3' });
 			await user.addTodo('TestList', { ...todo, title: todo.title + '4' });
-			await user.moveTodo('TestList', 3, 'TestList', 1);
-			expect(user.lists['TestList']).toEqual([
-				{
-					...todo,
-					completed: false,
-					id: 0
-				},
-				{
-					...todo,
-					title: todo.title + '3',
-					completed: false,
-					id: 1
-				},
-				{
-					...todo,
-					title: todo.title + '1',
-					completed: false,
-					id: 2
-				},
-				{
-					...todo,
-					title: todo.title + '2',
-					completed: false,
-					id: 3
-				},
-				{
-					...todo,
-					title: todo.title + '4',
-					completed: false,
-					id: 4
-				}
-			]);
+			await expect(user.moveTodo('TestList', 3, 'TestList', 1)).resolves.toEqual({
+				...todo,
+				title: todo.title + '3',
+				completed: false,
+				id: 1
+			});
+		});
+	});
+
+	describe('testing getLists', () => {
+		it("should return the first page of every list of the users' Todo Lists", () => {
+			expect(user.getLists()).toEqual({
+				Main: { items: [], pages: 1 }
+			});
+		});
+	});
+
+	describe('testing getList', () => {
+		it('should throw an error if the list does not exist', () => {
+			expect(() => user.getList('TestList', 0)).toThrowError(
+				"'TestList' list does not exist"
+			);
+		});
+
+		it('should throw an error if the page number is less than 1', async () => {
+			await user.addTodo('TestList', todo);
+			expect(() => user.getList('TestList', 0)).toThrowError(
+				'Invalid Page Number, must be greater than 0'
+			);
+		});
+
+		it('should throw an error if the page number exceeds the number of sections of the list', async () => {
+			await user.addTodo('TestList', todo);
+			expect(() => user.getList('TestList', 2)).toThrowError(
+				"'TestList' list has no more Todo Items"
+			);
+		});
+
+		it('should return the page of the list', async () => {
+			for (let i = 0; i < 55; i++) {
+				await user.addTodo('TestList', todo);
+			}
+			expect(user.getList('TestList', 1)['items']).toHaveLength(25);
+			expect(user.getList('TestList', 1)['pages']).toEqual(3);
+			expect(user.getList('TestList', 2)['items']).toHaveLength(25);
+			expect(user.getList('TestList', 3)['items']).toHaveLength(5);
 		});
 	});
 });

@@ -10,6 +10,7 @@
     -   GET
 
         -   [x] getLists - /
+        -   [x] getList - /:list/:page
 
     -   POST
 

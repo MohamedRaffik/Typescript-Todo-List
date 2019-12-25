@@ -31,7 +31,7 @@ describe('Unit Testing getLists controller', () => {
 		await getLists(req, res, next);
 		expect(res.status).lastCalledWith(200);
 		expect(res.json).lastCalledWith({
-			Main: []
+			Main: { items: [], pages: 1 }
 		});
 	});
 });

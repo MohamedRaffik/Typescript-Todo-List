@@ -9,10 +9,6 @@ interface MoveTodoBody {
 	newId: number;
 }
 
-interface MoveTodoResponse {
-	[list: string]: User.Todo[];
-}
-
 export const controller = (context: Context.Context) => {
 	const { isAuthenticated } = middleware.create(context);
 	const moveTodo = async (req: express.Request, res: express.Response) => {
@@ -27,11 +23,7 @@ export const controller = (context: Context.Context) => {
 		}
 		const user = req.user as User.UserClass;
 		try {
-			await user.moveTodo(list, Number(id), body.newList, body.newId);
-			const response: MoveTodoResponse = { [list]: user.lists[list] };
-			if (body.newList !== list) {
-				response[body.newList] = user.lists[body.newList];
-			}
+			const response = await user.moveTodo(list, Number(id), body.newList, body.newId);
 			return res.status(200).json(response);
 		} catch (err) {
 			return res.status(400).json({ error: err.message });

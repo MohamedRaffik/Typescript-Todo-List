@@ -7,7 +7,7 @@ const { BrowserRouter, Switch, Link, Route } = ReactRouterDOM;
 const { TodoList } = ListComponent;
 
 export const App = () => {
-	const [Lists, updateLists] = React.useState({
+	const [Lists, setLists] = React.useState({
 		Main: [],
 		Test: []
 	});

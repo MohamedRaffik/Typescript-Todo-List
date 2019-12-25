@@ -42,6 +42,20 @@ export const getLists = async (server: supertest.SuperTest<supertest.Test>, toke
 		.expect(200);
 };
 
+export const getList = async (
+	server: supertest.SuperTest<supertest.Test>,
+	list: string,
+	page: number,
+	token: string[]
+) => {
+	return await server
+		.get(`/api/list/${list}/${page}`)
+		.accept('application/json')
+		.set('Cookie', token[0])
+		.set('Authorization', `Bearer ${token[1]}`)
+		.expect(200);
+};
+
 export const createList = async (
 	server: supertest.SuperTest<supertest.Test>,
 	list: string,

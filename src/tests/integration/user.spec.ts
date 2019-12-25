@@ -48,9 +48,7 @@ describe('Unit Testing User Class', () => {
 			password: 'newpassword',
 			username: 'newname'
 		};
-		await expect(User.UserClass.create(db, newInfo)).rejects.toThrow(
-			'E11000 duplicate key error collection: local.Users index: _id_ dup key: { : "someemail@gmail.com" }'
-		);
+		await expect(User.UserClass.create(db, newInfo)).rejects.toThrow(RegExp('duplicate'));
 	});
 
 	it('should update user information in the database and be able to retrieve the update document', async () => {
