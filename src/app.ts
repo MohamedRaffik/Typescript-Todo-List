@@ -17,7 +17,7 @@ export const start = async (): Promise<[http.Server, Context.Context]> => {
 	app.use('/api', API.default(context));
 
 	app.get('/', (req: express.Request, res: express.Response) => {
-		res.status(200).json({ message: 'HI' });
+		res.json({ message: 'Hello from Todo List API' });
 	});
 
 	return await new Promise(resolve => {
