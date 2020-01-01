@@ -10,14 +10,14 @@ import * as renameList from './renameList';
 import * as updateTodo from './updateTodo';
 
 export const ListControllers = {
-	addTodo: addTodo.controller,
-	clearList: clearList.controller,
-	deleteList: deleteList.controller,
-	deleteTodo: deleteTodo.controller,
-	getLists: getLists.controller,
-	getList: getList.controller,
-	updateTodo: updateTodo.controller,
-	createList: createList.controller,
-	renameList: renameList.controller,
-	moveTodo: moveTodo.controller
+    addTodo: addTodo.controller,
+    clearList: clearList.controller,
+    deleteList: deleteList.controller,
+    deleteTodo: deleteTodo.controller,
+    getLists: getLists.controller,
+    getList: getList.controller,
+    updateTodo: updateTodo.controller,
+    createList: createList.controller,
+    renameList: renameList.controller,
+    moveTodo: moveTodo.controller
 };

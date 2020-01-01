@@ -4,13 +4,13 @@ export { AuthControllers as Auth } from './auth';
 export { ListControllers as List } from './list';
 
 export interface Payload {
-	email: string;
+    email: string;
 }
 
 declare global {
-	namespace Express {
-		interface Request {
-			user?: User.UserClass;
-		}
-	}
+    namespace Express {
+        interface Request {
+            user?: User.UserClass;
+        }
+    }
 }
