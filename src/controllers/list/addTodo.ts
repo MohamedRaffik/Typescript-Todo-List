@@ -1,6 +1,6 @@
 import express from 'express';
 import { Context } from '../../context';
-import { User, Todo } from '../../models/user';
+import { Todo, User } from '../../models/user';
 import { middleware } from '../middleware';
 import { validateArray, validateFields } from '../utils';
 

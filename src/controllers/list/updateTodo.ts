@@ -1,8 +1,8 @@
 import express from 'express';
 import { Context } from '../../context';
-import { User, UpdateTodo } from '../../models/user';
+import { UpdateTodo, User } from '../../models/user';
 import { middleware } from '../middleware';
-import { validateFields, validateArray } from '../utils';
+import { validateArray, validateFields } from '../utils';
 
 export const controller = (context: Context) => {
     const { isAuthenticated } = middleware(context);

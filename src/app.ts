@@ -2,7 +2,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import http from 'http';
-import { createContext, Context } from './context';
+import { Context, createContext } from './context';
 import { API } from './routes';
 
 const PORT = process.env.PORT || 5000;
