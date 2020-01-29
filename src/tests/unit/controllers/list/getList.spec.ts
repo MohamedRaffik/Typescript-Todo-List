@@ -37,36 +37,12 @@ describe('Unit Testing getList controller', () => {
         });
     });
 
-    it('should return an error response if the page is not a number', async () => {
-        req.params = { list: 'Main', page: 'not a number' };
-        await getList(req, res, next);
-        expect(res.status).lastCalledWith(400);
-        expect(res.json).lastCalledWith({
-            error: 'Page is not a number'
-        });
-    });
-
-    it('should return an error response if the page number is not within a valid range', async () => {
-        req.params = { list: 'Main', page: '-1' };
-        await getList(req, res, next);
-        expect(res.status).lastCalledWith(400);
-        expect(res.json).lastCalledWith({
-            error: 'Invalid Page Number, must be greater than 0'
-        });
-        req.params.page = '2';
-        await getList(req, res, next);
-        expect(res.status).lastCalledWith(400);
-        expect(res.json).lastCalledWith({
-            error: "'Main' list has no more Todo Items"
-        });
-    });
-
-    it('should return the page of the list', async () => {
-        req.params = { list: 'Main', page: '1' };
+    it('should return the todo list', async () => {
+        req.params = { list: 'Main' };
         await getList(req, res, next);
         expect(res.status).lastCalledWith(200);
         expect(res.json).lastCalledWith({
-            Main: { items: [], pages: 1 }
+            Main: []
         });
     });
 });

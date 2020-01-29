@@ -87,7 +87,7 @@ export const addTodo = async (
 export const moveTodo = async (
     server: supertest.SuperTest<supertest.Test>,
     oldPos: { list: string; id: number },
-    body: { newList: string; newId: number },
+    body: { newList: string },
     token: string[]
 ) => {
     return await server

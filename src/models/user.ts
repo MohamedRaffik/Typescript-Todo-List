@@ -2,11 +2,12 @@ import * as bcrypt from 'bcrypt';
 import * as mongodb from 'mongodb';
 
 export interface Todo {
-    id?: number;
     title: string;
     notes: string[];
     created: number;
     completed?: boolean;
+    deadline?: number;
+    reminder?: number;
 }
 
 export interface TodoList {
@@ -31,15 +32,8 @@ export interface UpdateTodo {
     title?: string;
     notes?: string[];
     completed?: boolean;
-}
-
-export interface ListPage {
-    items: Todo[];
-    pages: number;
-}
-
-export interface ListPages {
-    [list: string]: ListPage;
+    deadline?: number;
+    reminder?: number;
 }
 
 export class UserClass {
@@ -88,8 +82,8 @@ export class UserClass {
         if (!(list in this.lists)) {
             await this.createList(list);
         }
-        todo.id = this.lists[list].length;
-        this.lists[list].push(todo);
+        this.validAddOperation(todo, list);
+        this.insertItem(todo, list);
         await this.update({ lists: this.lists });
     }
 
@@ -101,44 +95,27 @@ export class UserClass {
 
     public async updateTodo(list: string, id: number, update: UpdateTodo) {
         this.validOperation(list, id);
+        const [todo] = this.lists[list].splice(id, 1);
         Object.keys(update).forEach(key => {
             if (update[key] !== undefined) {
-                this.lists[list][id][key] = update[key];
+                todo[key] = update[key];
             }
         });
+        this.validAddOperation(todo, list);
+        this.insertItem(todo, list);
         await this.update({ lists: this.lists });
-        return this.lists[list][id];
     }
 
-    public async moveTodo(list: string, id: number, newList: string, newId: number) {
+    public async moveTodo(list: string, id: number, newList: string) {
         this.validOperation(list, id);
         this.validOperation(newList);
-        if (!(0 <= newId)) {
-            throw Error(`Cannot move item to the '${newList}' list at position ${newId}`);
+        if (list === newList) {
+            throw Error('Cannot move within the same list');
         }
-        // Reassign newId to the end of the list if it is greater than the list length or to remain itself (splice works with any large value
-        // but to reassign id of the item newId must be resolved)
-        // Added second condition if the newList is the same as the items original list, the newId will be the list length - 1 rather than the list length
-        newId =
-            newId > this.lists[newList].length
-                ? list === newList
-                    ? this.lists[newList].length - 1
-                    : this.lists[newList].length
-                : newId;
-        const [item] = this.lists[list].splice(id, 1);
-        item.id = newId;
-        this.lists[newList].splice(newId, 0, item);
-        const start = list === newList && newId < id ? newId : id;
-        for (let i = start; i < this.lists[list].length; i++) {
-            this.lists[list][i].id = i;
-        }
-        if (list !== newList) {
-            for (let i = newId; i < this.lists[newList].length; i++) {
-                this.lists[newList][i].id = i;
-            }
-        }
+        const [todo] = this.lists[list].splice(id, 1);
+        this.validAddOperation(todo, list);
+        this.insertItem(todo, newList);
         await this.update({ lists: this.lists });
-        return this.lists[newList][newId];
     }
 
     public async createList(list: string) {
@@ -147,6 +124,9 @@ export class UserClass {
         }
         if (Object.keys(this.lists).length === 50) {
             throw Error('Maximum number of lists reached');
+        }
+        if (list.length > 30) {
+            throw Error('Listname must be less than or equal to 30 characters');
         }
         this.lists[list] = [];
         await this.update({ lists: this.lists });
@@ -185,29 +165,16 @@ export class UserClass {
         await this.update({ lists: this.lists });
     }
 
-    public getList(list: string, page: number): ListPage {
+    public getList(list: string) {
         this.validOperation(list);
-        if (page <= 0) {
-            throw Error('Invalid Page Number, must be greater than 0');
-        }
-        if (page > this.getTotalPages(list)) {
-            throw Error(`'${list}' list has no more Todo Items`);
-        }
-        return {
-            items: this.lists[list].slice((page - 1) * 25, page * 25),
-            pages: this.getTotalPages(list)
-        };
+        return this.lists[list];
     }
 
-    public getLists(): ListPages {
+    public getLists() {
         return Object.keys(this.lists).reduce((prev, curr) => {
-            prev[curr] = this.getList(curr, 1);
+            prev[curr] = this.getList(curr);
             return prev;
         }, {});
-    }
-
-    private getTotalPages(list: string) {
-        return Math.floor(this.lists[list].length / 25) + 1;
     }
 
     private validOperation(list: string, id?: number) {
@@ -221,11 +188,40 @@ export class UserClass {
         }
     }
 
+    private validAddOperation(todo: Todo, list: string) {
+        if (this.lists[list].length === 100) {
+            throw Error(`'${list}' list has reached its Todo Item limit`);
+        }
+        if (todo.notes.length > 10) {
+            throw Error('Todo Item must have less than or equal to 10 notes');
+        }
+    }
+
     private validListName(list: string) {
         // Tests if string is empty or has only whitespace
         if (!/\S/.test(list)) {
             throw Error(`'${list}' is not a valid list name`);
         }
+    }
+
+    private insertItem(todo: Todo, list: string) {
+        if (todo.deadline === undefined) {
+            this.lists[list].push(todo);
+            return;
+        }
+        let i = 0;
+        while (i < this.lists[list].length) {
+            const deadline = this.lists[list][i].deadline;
+            if (deadline) {
+                if (todo.deadline < deadline) {
+                    break;
+                }
+            } else {
+                break;
+            }
+            i++;
+        }
+        this.lists[list].splice(i, 0, todo);
     }
 
     private async update(update: Update) {

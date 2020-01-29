@@ -34,13 +34,19 @@ describe('Unit Testing updateTodo controller', () => {
     });
 
     it('should return an error if there are invalid types in the body of the request', async () => {
-        req.body = { title: 10, notes: [10], completed: 0 };
+        req.body = {
+            title: 10,
+            notes: [10],
+            completed: 0,
+            deadline: 'not deadline',
+            reminder: 'not reminder'
+        };
         req.params = { list: 'Main', id: '100' };
         await updateTodo(req, res, next);
         expect(res.status).lastCalledWith(400);
         expect(res.json).lastCalledWith({
             error:
-                "'title' value must be of type 'string', 'completed' value must be of type 'boolean', Values of '[ 10 ]' must be of type 'string'"
+                "'title' value must be of type 'string', 'completed' value must be of type 'boolean', 'reminder' value must be of type 'number', 'deadline' value must be of type 'number', Values of '[ 10 ]' must be of type 'string'"
         });
     });
 
@@ -65,26 +71,22 @@ describe('Unit Testing updateTodo controller', () => {
     });
 
     it('should return a successful response with the updated item', async () => {
-        req.body = { title: 'Updated Item', completed: true };
+        req.body = { title: 'Updated Item', completed: true, deadline: Date.now() };
         req.params = { list: 'Main', id: '0' };
         await updateTodo(req, res, next);
         expect(res.status).lastCalledWith(200);
         expect(res.json).lastCalledWith({
-            ...todo,
-            title: 'Updated Item',
-            completed: true,
-            id: 0
+            Main: [{ ...todo, title: 'Updated Item', completed: true, deadline: req.body.deadline }]
         });
     });
 
-    it('should return the unchanged item if there are no values that need to be updated', async () => {
+    it('should return the todo list the item is if there are no values that need to be updated', async () => {
         req.body = {};
         req.params = { list: 'Main', id: '0' };
         await updateTodo(req, res, next);
         expect(res.status).lastCalledWith(200);
         expect(res.json).lastCalledWith({
-            ...todo,
-            id: 0
+            Main: [{ ...todo }]
         });
     });
 });

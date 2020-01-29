@@ -27,13 +27,13 @@ describe('Unit Testing moveTodo controller', () => {
         ((res.json as unknown) as jest.SpyInstance).mockClear();
     });
 
-    it('should return an error response if there are invalid values/types for newList and newId', async () => {
+    it('should return an error response if there are invalid values/types for newList', async () => {
         req.params = { list: 'Main', id: '10' };
         req.body = { newList: 10 };
         await moveTodo(req, res, next);
         expect(res.status).lastCalledWith(400);
         expect(res.json).lastCalledWith({
-            error: "'newList' value must be of type 'string', 'newId' is not specified"
+            error: "'newList' value must be of type 'string'"
         });
     });
 
@@ -59,7 +59,7 @@ describe('Unit Testing moveTodo controller', () => {
 
     it('should return an error response if the item does not exist in the list', async () => {
         req.params = { list: 'Main', id: '0' };
-        req.body = { newList: 'Main', newId: 0 };
+        req.body = { newList: 'Main' };
         await moveTodo(req, res, next);
         expect(res.status).lastCalledWith(400);
         expect(res.json).lastCalledWith({
@@ -67,19 +67,7 @@ describe('Unit Testing moveTodo controller', () => {
         });
     });
 
-    it('should return an error response if the newId position is not a valid number', async () => {
-        const user = req.user as User.UserClass;
-        await user.addTodo('Main', todo);
-        req.params = { list: 'Main', id: '0' };
-        req.body = { newList: 'Main', newId: -1 };
-        await moveTodo(req, res, next);
-        expect(res.status).lastCalledWith(400);
-        expect(res.json).lastCalledWith({
-            error: "Cannot move item to the 'Main' list at position -1"
-        });
-    });
-
-    it('should return a response with the updated todo item when moving an item between lists', async () => {
+    it('should return a response with the updated todo list when moving an item between lists', async () => {
         const user = req.user as User.UserClass;
         await user.addTodo('Main', { ...todo, title: 'Main' });
         await user.addTodo('Main', { ...todo, title: 'Main1' });
@@ -88,48 +76,16 @@ describe('Unit Testing moveTodo controller', () => {
         await user.addTodo('TestList', { ...todo, title: 'TestList1' });
         await user.addTodo('TestList', { ...todo, title: 'TestList2' });
         req.params = { list: 'Main', id: '1' };
-        req.body = { newList: 'TestList', newId: 1 };
+        req.body = { newList: 'TestList' };
         await moveTodo(req, res, next);
         expect(res.status).lastCalledWith(200);
         expect(res.json).lastCalledWith({
-            ...todo,
-            id: 1,
-            title: 'Main1',
-            completed: false
-        });
-    });
-
-    it('should return a response with the updated todo item after moving a todo item within a list', async () => {
-        const user = req.user as User.UserClass;
-        await user.addTodo('Main', { ...todo, title: 'Main' });
-        await user.addTodo('Main', { ...todo, title: 'Main1' });
-        await user.addTodo('Main', { ...todo, title: 'Main2' });
-        req.params = { list: 'Main', id: '2' };
-        req.body = { newList: 'Main', newId: 0 };
-        await moveTodo(req, res, next);
-        expect(res.status).lastCalledWith(200);
-        expect(res.json).lastCalledWith({
-            ...todo,
-            id: 0,
-            title: 'Main2',
-            completed: false
-        });
-    });
-
-    it('should return a response with the updated todo item after moving the item to a position greater than the list size to the end of the list', async () => {
-        const user = req.user as User.UserClass;
-        await user.addTodo('Main', { ...todo, title: 'Main' });
-        await user.addTodo('Main', { ...todo, title: 'Main1' });
-        await user.addTodo('Main', { ...todo, title: 'Main2' });
-        req.params = { list: 'Main', id: '0' };
-        req.body = { newList: 'Main', newId: 20 };
-        await moveTodo(req, res, next);
-        expect(res.status).lastCalledWith(200);
-        expect(res.json).lastCalledWith({
-            ...todo,
-            id: 2,
-            title: 'Main',
-            completed: false
+            TestList: [
+                { ...todo, title: 'TestList' },
+                { ...todo, title: 'TestList1' },
+                { ...todo, title: 'TestList2' },
+                { ...todo, title: 'Main1' }
+            ]
         });
     });
 });

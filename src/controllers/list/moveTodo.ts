@@ -6,7 +6,6 @@ import * as utils from '../utils';
 
 interface MoveTodoBody {
     newList: string;
-    newId: number;
 }
 
 export const controller = (context: Context.Context) => {
@@ -15,15 +14,15 @@ export const controller = (context: Context.Context) => {
         const { list, id } = req.params;
         const body = req.body as MoveTodoBody;
         const error = utils.validateFields(body, {
-            newList: { type: 'string' },
-            newId: { type: 'number' }
+            newList: { type: 'string' }
         });
         if (error) {
             return res.status(400).json({ error });
         }
         const user = req.user as User.UserClass;
         try {
-            const response = await user.moveTodo(list, Number(id), body.newList, body.newId);
+            await user.moveTodo(list, Number(id), body.newList);
+            const response = { [body.newList]: user.getList(body.newList) };
             return res.status(200).json(response);
         } catch (err) {
             return res.status(400).json({ error: err.message });

@@ -75,14 +75,14 @@ describe('Integration Testing Endpoints', () => {
         it('should GET getLists at /', async () => {
             const response = await utils.getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
-                Main: { items: [], pages: 1 }
+                Main: []
             });
         });
 
         it('should GET getList at /:list/:page', async () => {
             const response = await utils.getList(server, 'Main', 1, token);
             expect(JSON.parse(response.text)).toEqual({
-                Main: { items: [], pages: 1 }
+                Main: []
             });
         });
 
@@ -91,9 +91,9 @@ describe('Integration Testing Endpoints', () => {
             await utils.createList(server, 'Appointments', token);
             const response = await utils.getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
-                Main: { items: [], pages: 1 },
-                Events: { items: [], pages: 1 },
-                Appointments: { items: [], pages: 1 }
+                Main: [],
+                Events: [],
+                Appointments: []
             });
         });
 
@@ -109,11 +109,14 @@ describe('Integration Testing Endpoints', () => {
                 token
             );
             expect(JSON.parse(response.text)).toEqual({
-                title: 'Doctors Appointment',
-                id: 0,
-                notes: ['Bring Appointment Papers', 'Pick up medicine'],
-                created: time,
-                completed: false
+                Events: [
+                    {
+                        title: 'Doctors Appointment',
+                        notes: ['Bring Appointment Papers', 'Pick up medicine'],
+                        created: time,
+                        completed: false
+                    }
+                ]
             });
         });
 
@@ -121,15 +124,18 @@ describe('Integration Testing Endpoints', () => {
             const response = await utils.moveTodo(
                 server,
                 { list: 'Events', id: 0 },
-                { newList: 'Appointments', newId: 0 },
+                { newList: 'Appointments' },
                 token
             );
             expect(JSON.parse(response.text)).toEqual({
-                title: 'Doctors Appointment',
-                id: 0,
-                notes: ['Bring Appointment Papers', 'Pick up medicine'],
-                created: time,
-                completed: false
+                Appointments: [
+                    {
+                        title: 'Doctors Appointment',
+                        notes: ['Bring Appointment Papers', 'Pick up medicine'],
+                        created: time,
+                        completed: false
+                    }
+                ]
             });
         });
 
@@ -137,20 +143,16 @@ describe('Integration Testing Endpoints', () => {
             await utils.renameList(server, 'Appointments', { newListName: 'Doctor' }, token);
             const response = await utils.getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
-                Main: { items: [], pages: 1 },
-                Events: { items: [], pages: 1 },
-                Doctor: {
-                    items: [
-                        {
-                            title: 'Doctors Appointment',
-                            id: 0,
-                            notes: ['Bring Appointment Papers', 'Pick up medicine'],
-                            created: time,
-                            completed: false
-                        }
-                    ],
-                    pages: 1
-                }
+                Main: [],
+                Events: [],
+                Doctor: [
+                    {
+                        title: 'Doctors Appointment',
+                        notes: ['Bring Appointment Papers', 'Pick up medicine'],
+                        created: time,
+                        completed: false
+                    }
+                ]
             });
         });
 
@@ -163,11 +165,14 @@ describe('Integration Testing Endpoints', () => {
                 token
             );
             expect(JSON.parse(response.text)).toEqual({
-                title: 'Doctors Appointment',
-                id: 0,
-                notes: ['Bring Appointment Papers'],
-                created: time,
-                completed: false
+                Doctor: [
+                    {
+                        title: 'Doctors Appointment',
+                        notes: ['Bring Appointment Papers'],
+                        created: time,
+                        completed: false
+                    }
+                ]
             });
         });
 
@@ -175,19 +180,15 @@ describe('Integration Testing Endpoints', () => {
             await utils.deleteList(server, 'Events', token);
             const response = await utils.getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
-                Main: { items: [], pages: 1 },
-                Doctor: {
-                    items: [
-                        {
-                            title: 'Doctors Appointment',
-                            id: 0,
-                            notes: ['Bring Appointment Papers'],
-                            created: time,
-                            completed: false
-                        }
-                    ],
-                    pages: 1
-                }
+                Main: [],
+                Doctor: [
+                    {
+                        title: 'Doctors Appointment',
+                        notes: ['Bring Appointment Papers'],
+                        created: time,
+                        completed: false
+                    }
+                ]
             });
         });
 
@@ -205,19 +206,15 @@ describe('Integration Testing Endpoints', () => {
             await utils.deleteTodo(server, 'Main', 0, token);
             const response = await utils.getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
-                Main: { items: [], pages: 1 },
-                Doctor: {
-                    items: [
-                        {
-                            title: 'Doctors Appointment',
-                            id: 0,
-                            notes: ['Bring Appointment Papers'],
-                            created: time,
-                            completed: false
-                        }
-                    ],
-                    pages: 1
-                }
+                Main: [],
+                Doctor: [
+                    {
+                        title: 'Doctors Appointment',
+                        notes: ['Bring Appointment Papers'],
+                        created: time,
+                        completed: false
+                    }
+                ]
             });
         });
 
@@ -225,8 +222,8 @@ describe('Integration Testing Endpoints', () => {
             await utils.clearList(server, 'Doctor', token);
             const response = await utils.getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
-                Main: { items: [], pages: 1 },
-                Doctor: { items: [], pages: 1 }
+                Main: [],
+                Doctor: []
             });
         });
     });

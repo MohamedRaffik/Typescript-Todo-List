@@ -28,9 +28,3 @@
         -   [x] clearList - /:list/update
         -   [x] deleteList - /:list/delete
         -   [x] deleteTodo - /:list/delete/:id
-
--   Add integration testing for endpoints
--   Add job model
--   Add job info in requests
--   Add job scheduling using mongodb listener
--   Add end to end tests

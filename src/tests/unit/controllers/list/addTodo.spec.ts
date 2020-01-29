@@ -43,7 +43,22 @@ describe('Unit Testing addTodo controller', () => {
         });
     });
 
-    it('should return an response with the updated list information', async () => {
+    it('should return an error response if the Todo item limit is reached', async () => {
+        if (req.user) {
+            req.user.lists.Main.length = 100;
+            req.body = { title: 'Limit Exceeded', notes: [] };
+            await addTodo(req, res, next);
+            expect(res.status).lastCalledWith(400);
+            expect(res.json).lastCalledWith({
+                error: "'Main' list has reached its Todo Item limit"
+            });
+            req.user.lists.Main.length = 0;
+        } else {
+            expect('Test did not run because of undefined req.user').toEqual(false);
+        }
+    });
+
+    it('should return an response with the updated list', async () => {
         req.body = {
             title: 'My First Item',
             notes: ['note1', 'note2'],
@@ -52,11 +67,14 @@ describe('Unit Testing addTodo controller', () => {
         await addTodo(req, res, next);
         expect(res.status).lastCalledWith(200);
         expect(res.json).lastCalledWith({
-            id: 0,
-            title: req.body.title,
-            notes: req.body.notes,
-            created: req.body.created,
-            completed: false
+            Main: [
+                {
+                    title: req.body.title,
+                    notes: req.body.notes,
+                    created: req.body.created,
+                    completed: false
+                }
+            ]
         });
     });
 });

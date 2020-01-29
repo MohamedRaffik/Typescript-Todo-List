@@ -7,7 +7,8 @@ describe('Unit Testing User Class', () => {
     const todo: User.Todo = {
         title: 'Create TODO',
         notes: ['Note 1', 'Note 2'],
-        created: Date.now()
+        created: Date.now(),
+        deadline: Date.now() + 10000
     };
 
     beforeEach(async () => {
@@ -43,13 +44,42 @@ describe('Unit Testing User Class', () => {
     });
 
     describe('testing addTodo', () => {
+        it('should throw an error when adding a todo item to a List with 100 elements', async () => {
+            expect(user.lists).toEqual({ Main: [] });
+            for (let i = 0; i < 100; i++) {
+                await user.addTodo('Main', todo);
+            }
+            await expect(user.addTodo('Main', todo)).rejects.toThrowError(
+                "'Main' list has reached its Todo Item limit"
+            );
+        });
+
         it('should add a todo item to the list and create that list if it does not exist', async () => {
             expect(user.lists).toEqual({ Main: [] });
             await user.addTodo('School', todo);
             expect(user.lists).toEqual({
                 Main: [],
-                School: [{ ...todo, id: 0, completed: false }]
+                School: [{ ...todo, completed: false }]
             });
+        });
+
+        it('should add a todo item to the list and maintain sort order', async () => {
+            todo.deadline = Number(todo.deadline);
+            expect(user.lists).toEqual({ Main: [] });
+            await user.addTodo('Main', todo);
+            await user.addTodo('Main', {
+                ...todo,
+                deadline: todo.deadline - 1000,
+                title: todo.title + '1'
+            });
+            const todoWithNoDeadline = { ...todo, title: todo.title + '2' };
+            delete todoWithNoDeadline.deadline;
+            await user.addTodo('Main', todoWithNoDeadline);
+            expect(user.lists['Main']).toEqual([
+                { ...todo, deadline: todo.deadline - 1000, title: todo.title + '1' },
+                { ...todo },
+                { ...todoWithNoDeadline, title: todo.title + '2' }
+            ]);
         });
     });
 
@@ -59,7 +89,6 @@ describe('Unit Testing User Class', () => {
             await user.updateTodo('School', 0, { completed: undefined, notes: undefined });
             expect(user.lists['School'][0]).toEqual({
                 ...todo,
-                id: 0,
                 completed: false
             });
         });
@@ -76,9 +105,27 @@ describe('Unit Testing User Class', () => {
             await user.updateTodo('School', 0, { completed: true });
             expect(user.lists['School'][0]).toEqual({
                 ...todo,
-                id: 0,
                 completed: true
             });
+        });
+
+        it('should maintain sort order when updating deadline time', async () => {
+            todo.deadline = Number(todo.deadline);
+            await user.addTodo('Main', todo);
+            await user.addTodo('Main', {
+                ...todo,
+                deadline: todo.deadline + 1000,
+                title: todo.title + '1'
+            });
+            expect(user.lists['Main']).toEqual([
+                { ...todo },
+                { ...todo, deadline: todo.deadline + 1000, title: todo.title + '1' }
+            ]);
+            await user.updateTodo('Main', 1, { deadline: todo.deadline - 2000 });
+            expect(user.lists['Main']).toEqual([
+                { ...todo, deadline: todo.deadline - 2000, title: todo.title + '1' },
+                { ...todo }
+            ]);
         });
     });
 
@@ -159,119 +206,102 @@ describe('Unit Testing User Class', () => {
 
     describe('testing moveTodo', () => {
         it('should throw an error if the list to move an item from does not exist', async () => {
-            await expect(user.moveTodo('TestList', 0, 'Main', 0)).rejects.toThrowError(
+            await expect(user.moveTodo('TestList', 0, 'Main')).rejects.toThrowError(
                 "'TestList' list does not exist"
             );
         });
 
         it('should throw an error if the item to be moved does not exist in the list', async () => {
             await user.createList('TestList');
-            await expect(user.moveTodo('TestList', 0, 'Main', 0)).rejects.toThrowError(
+            await expect(user.moveTodo('TestList', 0, 'Main')).rejects.toThrowError(
                 "Item does not exist in 'TestList' list"
             );
         });
 
         it('should throw an error if the newId is a negative number', async () => {
             await user.createList('TestList');
-            await expect(user.moveTodo('TestList', 0, 'Main', -1)).rejects.toThrowError(
+            await expect(user.moveTodo('TestList', 0, 'Main')).rejects.toThrowError(
                 "Item does not exist in 'TestList' list"
             );
         });
 
-        it('should move an item from one list to another', async () => {
+        it('should throw an error when moving an item within the same list', async () => {
             await user.addTodo('TestList', todo);
-            await user.addTodo('TestList', { ...todo, title: todo.title + '1' });
-            await user.addTodo('TestList', { ...todo, title: todo.title + '2' });
-            await user.addTodo('Main', { ...todo, title: todo.title + 'Main1' });
-            await user.addTodo('Main', { ...todo, title: todo.title + 'Main2' });
-            await user.moveTodo('TestList', 1, 'Main', 1);
+            await expect(user.moveTodo('TestList', 0, 'TestList')).rejects.toThrow(
+                'Cannot move within the same list'
+            );
+        });
+
+        it('should move an item from one list to another and maintain sort order', async () => {
+            todo.deadline = Number(todo.deadline);
+            await user.addTodo('TestList', todo);
+            await user.addTodo('TestList', {
+                ...todo,
+                title: todo.title + '1',
+                deadline: todo.deadline + 1001
+            });
+            await user.addTodo('TestList', {
+                ...todo,
+                title: todo.title + '2',
+                deadline: todo.deadline + 1002
+            });
+            await user.addTodo('Main', {
+                ...todo,
+                title: todo.title + 'Main1',
+                deadline: todo.deadline + 1003
+            });
+            const noDeadline = { ...todo };
+            delete noDeadline.deadline;
+            await user.addTodo('Main', {
+                ...noDeadline,
+                title: todo.title + 'Main2'
+            });
+            await user.moveTodo('TestList', 1, 'Main');
             expect(user.lists['TestList']).toEqual([
-                {
-                    ...todo,
-                    completed: false,
-                    id: 0
-                },
+                { ...todo },
                 {
                     ...todo,
                     title: todo.title + '2',
-                    completed: false,
-                    id: 1
+                    deadline: todo.deadline + 1002
                 }
             ]);
             expect(user.lists['Main']).toEqual([
                 {
                     ...todo,
-                    title: todo.title + 'Main1',
-                    completed: false,
-                    id: 0
-                },
-                {
-                    ...todo,
                     title: todo.title + '1',
-                    completed: false,
-                    id: 1
+                    deadline: todo.deadline + 1001
                 },
                 {
                     ...todo,
-                    title: todo.title + 'Main2',
-                    completed: false,
-                    id: 2
+                    title: todo.title + 'Main1',
+                    deadline: todo.deadline + 1003
+                },
+                {
+                    ...noDeadline,
+                    title: todo.title + 'Main2'
                 }
             ]);
-        });
-
-        it('should be able to move an item within the same list', async () => {
-            await user.addTodo('TestList', todo);
-            await user.addTodo('TestList', { ...todo, title: todo.title + '1' });
-            await user.addTodo('TestList', { ...todo, title: todo.title + '2' });
-            await user.addTodo('TestList', { ...todo, title: todo.title + '3' });
-            await user.addTodo('TestList', { ...todo, title: todo.title + '4' });
-            await expect(user.moveTodo('TestList', 3, 'TestList', 1)).resolves.toEqual({
-                ...todo,
-                title: todo.title + '3',
-                completed: false,
-                id: 1
-            });
         });
     });
 
     describe('testing getLists', () => {
         it("should return the first page of every list of the users' Todo Lists", () => {
             expect(user.getLists()).toEqual({
-                Main: { items: [], pages: 1 }
+                Main: []
             });
         });
     });
 
     describe('testing getList', () => {
         it('should throw an error if the list does not exist', () => {
-            expect(() => user.getList('TestList', 0)).toThrowError(
-                "'TestList' list does not exist"
-            );
+            expect(() => user.getList('TestList')).toThrowError("'TestList' list does not exist");
         });
 
-        it('should throw an error if the page number is less than 1', async () => {
-            await user.addTodo('TestList', todo);
-            expect(() => user.getList('TestList', 0)).toThrowError(
-                'Invalid Page Number, must be greater than 0'
-            );
-        });
-
-        it('should throw an error if the page number exceeds the number of sections of the list', async () => {
-            await user.addTodo('TestList', todo);
-            expect(() => user.getList('TestList', 2)).toThrowError(
-                "'TestList' list has no more Todo Items"
-            );
-        });
-
-        it('should return the page of the list', async () => {
+        it('should return the list', async () => {
             for (let i = 0; i < 55; i++) {
                 await user.addTodo('TestList', todo);
             }
-            expect(user.getList('TestList', 1)['items']).toHaveLength(25);
-            expect(user.getList('TestList', 1)['pages']).toEqual(3);
-            expect(user.getList('TestList', 2)['items']).toHaveLength(25);
-            expect(user.getList('TestList', 3)['items']).toHaveLength(5);
+            expect(user.getList('TestList')).toHaveLength(55);
         });
     });
 });

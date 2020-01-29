@@ -35,9 +35,13 @@ export const controller = (context: Context.Context) => {
             created: body.created,
             completed: body.completed
         };
-        await user.addTodo(list, newTodo);
-        const response: User.Todo = user.lists[list][user.lists[list].length - 1];
-        return res.status(200).json(response);
+        try {
+            await user.addTodo(list, newTodo);
+            const response = { [list]: user.getList(list) };
+            return res.status(200).json(response);
+        } catch (err) {
+            return res.status(400).json({ error: err.message });
+        }
     };
     return [isAuthenticated, addTodo];
 };
