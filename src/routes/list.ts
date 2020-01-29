@@ -1,10 +1,9 @@
-import * as express from 'express';
-import * as Context from '../context';
-import * as controllers from '../controllers';
+import express from 'express';
+import { Context } from '../context';
+import { List } from '../controllers';
 
-export const Router = (context: Context.Context) => {
+export const Router = (context: Context) => {
     const ListRouter = express.Router();
-    const { List } = controllers;
 
     ListRouter.get('/', List.getLists(context));
     ListRouter.get('/:list/:page', List.getList(context));

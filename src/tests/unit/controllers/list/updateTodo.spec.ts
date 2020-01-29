@@ -1,18 +1,18 @@
-import * as express from 'express';
-import * as updateTodoController from '../../../../controllers/list/updateTodo';
-import * as User from '../../../../models/user';
-import * as mock from '../../../mock';
+import express from 'express';
+import { controller } from '../../../../controllers/list/updateTodo';
+import { Todo } from '../../../../models/user';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const [isAuthenticated, updateTodo] = updateTodoController.controller(context);
+const context = createMockContext();
+const [isAuthenticated, updateTodo] = controller(context);
 
 describe('Unit Testing updateTodo controller', () => {
     const req = ({ body: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     const next = jest.fn();
-    const todo: User.Todo = {
+    const todo: Todo = {
         title: 'Item',
         notes: [],
         created: Date.now(),

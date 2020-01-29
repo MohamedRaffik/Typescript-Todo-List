@@ -1,13 +1,13 @@
-import * as express from 'express';
-import * as addTodoController from '../../../../controllers/list/addTodo';
-import * as mock from '../../../mock';
+import express from 'express';
+import { controller } from '../../../../controllers/list/addTodo';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const [isAuthenticated, addTodo] = addTodoController.controller(context);
+const context = createMockContext();
+const [isAuthenticated, addTodo] = controller(context);
 
 describe('Unit Testing addTodo controller', () => {
     const req = ({ body: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     const next = jest.fn();

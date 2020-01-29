@@ -1,15 +1,15 @@
-import * as express from 'express';
-import * as jwt from 'jsonwebtoken';
-import * as middleware from '../../../../controllers/middleware';
-import * as User from '../../../../models/user';
-import * as mock from '../../../mock';
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { middleware } from '../../../../controllers/middleware';
+import { UserInfo } from '../../../../models/user';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const { isAuthenticated } = middleware.create(context);
+const context = createMockContext();
+const { isAuthenticated } = middleware(context);
 
 describe('Unit Testing middleware functions', () => {
     const req = ({ body: {}, headers: {}, cookies: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     const next = jest.fn();
@@ -23,7 +23,7 @@ describe('Unit Testing middleware functions', () => {
     });
 
     describe('testing isAuthenticated middleware', () => {
-        const info: User.Info = {
+        const info: UserInfo = {
             email: 'someemail@gmail.com',
             password: 'password123',
             username: 'John Doe'

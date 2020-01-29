@@ -1,14 +1,14 @@
-import * as express from 'express';
-import * as deleteListController from '../../../../controllers/list/deleteList';
-import * as User from '../../../../models/user';
-import * as mock from '../../../mock';
+import express from 'express';
+import { controller } from '../../../../controllers/list/deleteList';
+import { User } from '../../../../models/user';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const [isAuthenticated, deleteList] = deleteListController.controller(context);
+const context = createMockContext();
+const [isAuthenticated, deleteList] = controller(context);
 
 describe('Unit Testing deleteList controller', () => {
     const req = ({ body: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     jest.spyOn(res, 'end');
@@ -49,7 +49,7 @@ describe('Unit Testing deleteList controller', () => {
     });
 
     it('should return a successful response after successfully deleting the list', async () => {
-        const user = req.user as User.UserClass;
+        const user = req.user as User;
         await user.addTodo('School', { title: 'A', notes: [], created: Date.now() });
         req.params = { list: 'School' };
         await deleteList(req, res, next);

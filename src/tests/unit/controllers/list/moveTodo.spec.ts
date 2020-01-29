@@ -1,18 +1,18 @@
-import * as express from 'express';
-import * as moveTodoController from '../../../../controllers/list/moveTodo';
-import * as User from '../../../../models/user';
-import * as mock from '../../../mock';
+import express from 'express';
+import { controller } from '../../../../controllers/list/moveTodo';
+import { User, Todo } from '../../../../models/user';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const [isAuthenticated, moveTodo] = moveTodoController.controller(context);
+const context = createMockContext();
+const [isAuthenticated, moveTodo] = controller(context);
 
 describe('Unit Testing moveTodo controller', () => {
     const req = ({ body: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     const next = jest.fn();
-    const todo: User.Todo = { title: 'Title', notes: [], created: Date.now() };
+    const todo: Todo = { title: 'Title', notes: [], created: Date.now() };
 
     beforeEach(async () => {
         context.db.dropCollection('Users');
@@ -46,7 +46,7 @@ describe('Unit Testing moveTodo controller', () => {
             error: "'TestList' list does not exist"
         });
 
-        const user = req.user as User.UserClass;
+        const user = req.user as User;
         await user.addTodo('Main', todo);
         req.params = { list: 'Main', id: '0' };
         req.body = { newList: 'TestList', newId: 0 };
@@ -68,7 +68,7 @@ describe('Unit Testing moveTodo controller', () => {
     });
 
     it('should return a response with the updated todo list when moving an item between lists', async () => {
-        const user = req.user as User.UserClass;
+        const user = req.user as User;
         await user.addTodo('Main', { ...todo, title: 'Main' });
         await user.addTodo('Main', { ...todo, title: 'Main1' });
         await user.addTodo('Main', { ...todo, title: 'Main2' });

@@ -1,8 +1,8 @@
-import * as express from 'express';
-import * as Context from '../../context';
-import * as User from '../../models/user';
-import * as middleware from '../middleware';
-import * as utils from '../utils';
+import express from 'express';
+import { Context } from '../../context';
+import { User, Todo } from '../../models/user';
+import { middleware } from '../middleware';
+import { validateArray, validateFields } from '../utils';
 
 interface AddTodoBody {
     title: string;
@@ -11,12 +11,12 @@ interface AddTodoBody {
     completed: boolean;
 }
 
-export const controller = (context: Context.Context) => {
-    const { isAuthenticated } = middleware.create(context);
+export const controller = (context: Context) => {
+    const { isAuthenticated } = middleware(context);
     const addTodo = async (req: express.Request, res: express.Response) => {
         const body = req.body as AddTodoBody;
         const { list } = req.params;
-        let error = utils.validateFields(body, {
+        let error = validateFields(body, {
             list: { type: 'string', default: 'Main' },
             notes: {},
             completed: { type: 'boolean', default: false }
@@ -24,12 +24,12 @@ export const controller = (context: Context.Context) => {
         if (error) {
             return res.status(400).json({ error });
         }
-        error = utils.validateArray(body.notes, { type: 'string' });
+        error = validateArray(body.notes, { type: 'string' });
         if (error) {
             return res.status(400).json({ error });
         }
-        const user = req.user as User.UserClass;
-        const newTodo: User.Todo = {
+        const user = req.user as User;
+        const newTodo: Todo = {
             title: body.title,
             notes: body.notes,
             created: body.created,

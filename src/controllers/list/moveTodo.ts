@@ -1,25 +1,25 @@
-import * as express from 'express';
-import * as Context from '../../context';
-import * as User from '../../models/user';
-import * as middleware from '../middleware';
-import * as utils from '../utils';
+import express from 'express';
+import { Context } from '../../context';
+import { User } from '../../models/user';
+import { middleware } from '../middleware';
+import { validateFields } from '../utils';
 
 interface MoveTodoBody {
     newList: string;
 }
 
-export const controller = (context: Context.Context) => {
-    const { isAuthenticated } = middleware.create(context);
+export const controller = (context: Context) => {
+    const { isAuthenticated } = middleware(context);
     const moveTodo = async (req: express.Request, res: express.Response) => {
         const { list, id } = req.params;
         const body = req.body as MoveTodoBody;
-        const error = utils.validateFields(body, {
+        const error = validateFields(body, {
             newList: { type: 'string' }
         });
         if (error) {
             return res.status(400).json({ error });
         }
-        const user = req.user as User.UserClass;
+        const user = req.user as User;
         try {
             await user.moveTodo(list, Number(id), body.newList);
             const response = { [body.newList]: user.getList(body.newList) };

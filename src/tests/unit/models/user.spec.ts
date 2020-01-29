@@ -1,10 +1,10 @@
-import * as User from '../../../models/user';
-import * as mock from '../../mock';
+import { User, Todo } from '../../../models/user';
+import { createMockContext } from '../../mock';
 
 describe('Unit Testing User Class', () => {
-    let user: User.UserClass;
-    const context = mock.createMockContext();
-    const todo: User.Todo = {
+    let user: User;
+    const context = createMockContext();
+    const todo: Todo = {
         title: 'Create TODO',
         notes: ['Note 1', 'Note 2'],
         created: Date.now(),

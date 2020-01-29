@@ -1,5 +1,5 @@
-import * as mongodb from 'mongodb';
-import * as User from '../models/user';
+import mongodb from 'mongodb';
+import { User, UserUpdate, TodoList } from '../models/user';
 
 export class MockResponse {
     public status(code: number) {
@@ -37,14 +37,14 @@ class Database {
                 _id: string;
                 username: string;
                 password: string;
-                lists: User.TodoList;
+                lists: TodoList;
             }) => {
                 if (insert._id in this.db[name]) {
                     throw Error('Duplicate key');
                 }
                 this.db[name][insert._id] = insert;
             },
-            updateOne: async (query: { _id: string }, update: { $set: User.Update }) => {
+            updateOne: async (query: { _id: string }, update: { $set: UserUpdate }) => {
                 Object.entries(update.$set).forEach(pair => {
                     const [key, value] = pair;
                     this.db[name][query._id][key] = value;
@@ -56,7 +56,7 @@ class Database {
 
 export const createMockContext = () => {
     return {
-        User: User.UserClass,
+        User: User,
         db: (new Database() as unknown) as mongodb.Db,
         client: ({} as unknown) as mongodb.MongoClient
     };

@@ -1,14 +1,14 @@
-import * as express from 'express';
-import * as deleteTodoController from '../../../../controllers/list/deleteTodo';
-import * as User from '../../../../models/user';
-import * as mock from '../../../mock';
+import express from 'express';
+import { controller } from '../../../../controllers/list/deleteTodo';
+import { User } from '../../../../models/user';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const [isAuthenticated, deleteTodo] = deleteTodoController.controller(context);
+const context = createMockContext();
+const [isAuthenticated, deleteTodo] = controller(context);
 
 describe('Unit Testing deleteTodo controller', () => {
     const req = ({ body: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     jest.spyOn(res, 'end');
@@ -50,7 +50,7 @@ describe('Unit Testing deleteTodo controller', () => {
 
     it('should return a successful response if the item was successfully deleted', async () => {
         req.params = { list: 'Main', id: String(0) };
-        const user = req.user as User.UserClass;
+        const user = req.user as User;
         await user.addTodo('Main', { title: 'A', notes: [], created: Date.now() });
         await deleteTodo(req, res, next);
         expect(res.status).lastCalledWith(200);

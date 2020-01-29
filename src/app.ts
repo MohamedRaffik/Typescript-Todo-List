@@ -1,20 +1,20 @@
-import * as compression from 'compression';
-import * as cookieParser from 'cookie-parser';
-import * as express from 'express';
-import * as http from 'http';
-import * as Context from './context';
-import * as API from './routes';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
+import express from 'express';
+import http from 'http';
+import { createContext, Context } from './context';
+import { API } from './routes';
 
 const PORT = process.env.PORT || 5000;
 
-export const start = async (): Promise<[http.Server, Context.Context]> => {
-    const app = express.default();
-    const context = await Context.createContext();
+export const start = async (): Promise<[http.Server, Context]> => {
+    const app = express();
+    const context = await createContext();
 
     app.use(express.json());
-    app.use(compression.default());
-    app.use(cookieParser.default(process.env.SECRET_KEY));
-    app.use('/api', API.default(context));
+    app.use(compression());
+    app.use(cookieParser(process.env.SECRET_KEY));
+    app.use('/api', API(context));
 
     app.get('/', (req: express.Request, res: express.Response) => {
         res.json({ message: 'Hello from Todo List API' });

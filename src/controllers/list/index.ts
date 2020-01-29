@@ -1,23 +1,23 @@
-import * as addTodo from './addTodo';
-import * as clearList from './clearList';
-import * as createList from './createList';
-import * as deleteList from './deleteList';
-import * as deleteTodo from './deleteTodo';
-import * as getList from './getList';
-import * as getLists from './getLists';
-import * as moveTodo from './moveTodo';
-import * as renameList from './renameList';
-import * as updateTodo from './updateTodo';
+import { controller as AddTodoController } from './addTodo';
+import { controller as ClearListController } from './clearList';
+import { controller as CreateListController } from './createList';
+import { controller as DeleteListController } from './deleteList';
+import { controller as DeleteTodoController } from './deleteTodo';
+import { controller as GetListController } from './getList';
+import { controller as GetListsController } from './getLists';
+import { controller as MoveTodoController } from './moveTodo';
+import { controller as RenameListController } from './renameList';
+import { controller as UpdateTodoController } from './updateTodo';
 
 export const ListControllers = {
-    addTodo: addTodo.controller,
-    clearList: clearList.controller,
-    deleteList: deleteList.controller,
-    deleteTodo: deleteTodo.controller,
-    getLists: getLists.controller,
-    getList: getList.controller,
-    updateTodo: updateTodo.controller,
-    createList: createList.controller,
-    renameList: renameList.controller,
-    moveTodo: moveTodo.controller
+    addTodo: AddTodoController,
+    clearList: ClearListController,
+    deleteList: DeleteListController,
+    deleteTodo: DeleteTodoController,
+    getLists: GetListsController,
+    getList: GetListController,
+    updateTodo: UpdateTodoController,
+    createList: CreateListController,
+    renameList: RenameListController,
+    moveTodo: MoveTodoController
 };

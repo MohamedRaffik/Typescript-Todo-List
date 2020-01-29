@@ -1,8 +1,8 @@
-import * as express from 'express';
-import * as jwt from 'jsonwebtoken';
-import * as controllerInterfaces from '..';
-import * as Context from '../../context';
-import * as utils from '../utils';
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { Payload } from '..';
+import { Context } from '../../context';
+import { validateFields } from '../utils';
 
 interface LoginBody {
     email: string;
@@ -13,10 +13,10 @@ interface LoginResponse {
     token: string;
 }
 
-export const controller = (context: Context.Context) => {
+export const controller = (context: Context) => {
     const Login = async (req: express.Request, res: express.Response) => {
         const body = req.body;
-        const error = utils.validateFields(body, {
+        const error = validateFields(body, {
             email: { type: 'string' },
             password: { type: 'string' }
         });
@@ -32,7 +32,7 @@ export const controller = (context: Context.Context) => {
         if (!user.authenticate(password)) {
             return res.status(401).json({ error: 'Incorrect email or password' });
         }
-        const payload: controllerInterfaces.Payload = {
+        const payload: Payload = {
             email: user.email
         };
         const token = jwt.sign(payload, String(process.env.SECRET_KEY)).split('.');

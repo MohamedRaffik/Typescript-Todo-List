@@ -1,4 +1,4 @@
-import * as User from '../models/user';
+import { User } from '../models/user';
 
 export { AuthControllers as Auth } from './auth';
 export { ListControllers as List } from './list';
@@ -10,7 +10,7 @@ export interface Payload {
 declare global {
     namespace Express {
         interface Request {
-            user?: User.UserClass;
+            user?: User;
         }
     }
 }

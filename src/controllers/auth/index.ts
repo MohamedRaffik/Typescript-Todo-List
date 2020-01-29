@@ -1,7 +1,7 @@
-import * as Login from './login';
-import * as Register from './register';
+import { controller as LoginController } from './login';
+import { controller as RegisterController } from './register';
 
 export const AuthControllers = {
-    Login: Login.controller,
-    Register: Register.controller
+    Login: LoginController,
+    Register: RegisterController
 };

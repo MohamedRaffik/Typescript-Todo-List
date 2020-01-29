@@ -1,9 +1,9 @@
-import * as express from 'express';
-import * as jwt from 'jsonwebtoken';
-import * as controllersInterface from '..';
-import * as Context from '../../context';
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { Payload } from '..';
+import { Context } from '../../context';
 
-export const create = (context: Context.Context) => {
+export const middleware = (context: Context) => {
     return {
         isAuthenticated: async (
             req: express.Request,
@@ -25,7 +25,7 @@ export const create = (context: Context.Context) => {
                 const payload = jwt.verify(
                     [req.cookies['token'], token].join('.'),
                     String(process.env.SECRET_KEY)
-                ) as controllersInterface.Payload;
+                ) as Payload;
                 const user = await User.get(db, payload.email);
                 if (!user) {
                     return res.status(401).json({ error: 'Account not Found' });

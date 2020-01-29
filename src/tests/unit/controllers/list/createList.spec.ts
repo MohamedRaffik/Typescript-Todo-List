@@ -1,14 +1,14 @@
-import * as express from 'express';
-import * as createListController from '../../../../controllers/list/createList';
-import * as User from '../../../../models/user';
-import * as mock from '../../../mock';
+import express from 'express';
+import { controller } from '../../../../controllers/list/createList';
+import { User } from '../../../../models/user';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const [isAuthenticated, createList] = createListController.controller(context);
+const context = createMockContext();
+const [isAuthenticated, createList] = controller(context);
 
 describe('Unit Testing createList controller', () => {
     const req = ({ body: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     jest.spyOn(res, 'end');
@@ -61,7 +61,7 @@ describe('Unit Testing createList controller', () => {
         await createList(req, res, next);
         expect(res.status).lastCalledWith(200);
         expect(res.end).toBeCalled();
-        const user = req.user as User.UserClass;
+        const user = req.user as User;
         expect(user.lists['NewList']).toEqual([]);
     });
 });

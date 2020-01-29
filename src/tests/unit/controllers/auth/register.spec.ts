@@ -1,13 +1,13 @@
-import * as express from 'express';
-import * as RegisterController from '../../../../controllers/auth/register';
-import * as mock from '../../../mock';
+import express from 'express';
+import { controller } from '../../../../controllers/auth/register';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const [Register] = RegisterController.controller(context);
+const context = createMockContext();
+const [Register] = controller(context);
 
 describe('Unit Testing Register controller', () => {
     const req = ({ body: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     jest.spyOn(res, 'cookie');

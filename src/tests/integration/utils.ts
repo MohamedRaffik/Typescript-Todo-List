@@ -1,6 +1,6 @@
-import * as chance from 'chance';
-import * as supertest from 'supertest';
-import * as User from '../../models/user';
+import chance from 'chance';
+import supertest from 'supertest';
+import { Todo } from '../../models/user';
 
 const random = chance.Chance();
 
@@ -71,7 +71,7 @@ export const createList = async (
 export const addTodo = async (
     server: supertest.SuperTest<supertest.Test>,
     list: string,
-    todo: User.Todo,
+    todo: Todo,
     token: string[]
 ) => {
     return await server

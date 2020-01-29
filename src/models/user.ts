@@ -15,14 +15,14 @@ export interface TodoList {
     [list: string]: Todo[];
 }
 
-export interface Info {
+export interface UserInfo {
     email: string;
     username: string;
     password: string;
     lists?: TodoList;
 }
 
-export interface Update {
+export interface UserUpdate {
     username?: string;
     password?: string;
     lists?: TodoList;
@@ -36,22 +36,22 @@ export interface UpdateTodo {
     reminder?: number;
 }
 
-export class UserClass {
+export class User {
     public static get = async (db: mongodb.Db, email: string) => {
         const doc = await db.collection('Users').findOne({ _id: email });
         if (!doc) {
             return undefined;
         }
         const { _id, ...info } = doc;
-        return new UserClass(db, { email: _id, ...info });
+        return new User(db, { email: _id, ...info });
     };
 
-    public static create = async (db: mongodb.Db, info: Info) => {
+    public static create = async (db: mongodb.Db, info: UserInfo) => {
         if (info.password.length <= 8) {
             throw Error('Password length is too short, must be greater than 8 characters');
         }
         info.password = bcrypt.hashSync(info.password, 10);
-        const user = new UserClass(db, info);
+        const user = new User(db, info);
         const { email, ...userInfo } = user;
         delete userInfo.db;
         await db.collection('Users').insertOne({ _id: email, ...userInfo });
@@ -64,7 +64,7 @@ export class UserClass {
     public lists: TodoList;
     public db: mongodb.Db;
 
-    constructor(db: mongodb.Db, info: Info) {
+    constructor(db: mongodb.Db, info: UserInfo) {
         this.email = info.email;
         this.username = info.username;
         this.password = info.password;
@@ -224,7 +224,7 @@ export class UserClass {
         this.lists[list].splice(i, 0, todo);
     }
 
-    private async update(update: Update) {
+    private async update(update: UserUpdate) {
         await this.db.collection('Users').updateOne({ _id: this.email }, { $set: update });
     }
 }

@@ -1,13 +1,13 @@
-import * as express from 'express';
-import * as getListsController from '../../../../controllers/list/getLists';
-import * as mock from '../../../mock';
+import express from 'express';
+import { controller } from '../../../../controllers/list/getLists';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const [isAuthenticated, getLists] = getListsController.controller(context);
+const context = createMockContext();
+const [isAuthenticated, getLists] = controller(context);
 
 describe('Unit Testing getLists controller', () => {
     const req = ({ body: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     const next = jest.fn();

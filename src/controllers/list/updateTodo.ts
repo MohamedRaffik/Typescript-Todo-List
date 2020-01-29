@@ -1,29 +1,22 @@
-import * as express from 'express';
-import * as Context from '../../context';
-import * as User from '../../models/user';
-import * as middleware from '../middleware';
-import * as utils from '../utils';
+import express from 'express';
+import { Context } from '../../context';
+import { User, UpdateTodo } from '../../models/user';
+import { middleware } from '../middleware';
+import { validateFields, validateArray } from '../utils';
 
-export const controller = (context: Context.Context) => {
-    const { isAuthenticated } = middleware.create(context);
+export const controller = (context: Context) => {
+    const { isAuthenticated } = middleware(context);
     const updateTodo = async (req: express.Request, res: express.Response) => {
-        const body = req.body as User.UpdateTodo;
+        const body = req.body as UpdateTodo;
         const { list, id } = req.params;
-        const user = req.user as User.UserClass;
-        const error: string[] = [];
-        const fields = [
-            'title' in body ? utils.validateFields(body, { title: { type: 'string' } }) : '',
-            'completed' in body
-                ? utils.validateFields(body, { completed: { type: 'boolean' } })
-                : '',
-            'reminder' in body ? utils.validateFields(body, { reminder: { type: 'number' } }) : '',
-            'deadline' in body ? utils.validateFields(body, { deadline: { type: 'number' } }) : '',
-            'notes' in body ? utils.validateArray(body.notes as any[], { type: 'string' }) : ''
-        ].forEach(err => {
-            if (err) {
-                error.push(err);
-            }
-        });
+        const user = req.user as User;
+        const error = [
+            'title' in body ? validateFields(body, { title: { type: 'string' } }) : '',
+            'completed' in body ? validateFields(body, { completed: { type: 'boolean' } }) : '',
+            'reminder' in body ? validateFields(body, { reminder: { type: 'number' } }) : '',
+            'deadline' in body ? validateFields(body, { deadline: { type: 'number' } }) : '',
+            'notes' in body ? validateArray(body.notes as any[], { type: 'string' }) : ''
+        ].filter(err => err);
         if (error.length !== 0) {
             return res.status(400).json({ error: error.join(', ') });
         }

@@ -1,14 +1,14 @@
-import * as express from 'express';
-import * as renameListController from '../../../../controllers/list/renameList';
-import * as User from '../../../../models/user';
-import * as mock from '../../../mock';
+import express from 'express';
+import { controller } from '../../../../controllers/list/renameList';
+import { User } from '../../../../models/user';
+import { createMockContext, MockResponse } from '../../../mock';
 
-const context = mock.createMockContext();
-const [isAuthenticated, renameList] = renameListController.controller(context);
+const context = createMockContext();
+const [isAuthenticated, renameList] = controller(context);
 
 describe('Unit Testing renameList controller', () => {
     const req = ({ body: {} } as unknown) as express.Request;
-    const res = (new mock.MockResponse() as unknown) as express.Response;
+    const res = (new MockResponse() as unknown) as express.Response;
     jest.spyOn(res, 'status');
     jest.spyOn(res, 'json');
     jest.spyOn(res, 'end');
@@ -51,7 +51,7 @@ describe('Unit Testing renameList controller', () => {
     it('should return an error response if the newListName is an empty character string', async () => {
         req.body = { newListName: '' };
         req.params = { list: 'TestList' };
-        const user = req.user as User.UserClass;
+        const user = req.user as User;
         await user.createList('TestList');
         await renameList(req, res, next);
         expect(res.status).lastCalledWith(400);
@@ -63,7 +63,7 @@ describe('Unit Testing renameList controller', () => {
     it('should return an error response if the newListName already exists', async () => {
         req.body = { newListName: 'Main' };
         req.params = { list: 'TestList' };
-        const user = req.user as User.UserClass;
+        const user = req.user as User;
         await user.createList('TestList');
         await renameList(req, res, next);
         expect(res.status).lastCalledWith(400);
@@ -75,7 +75,7 @@ describe('Unit Testing renameList controller', () => {
     it('should return a successful response if the list was successfully renamed', async () => {
         req.body = { newListName: 'RenamedList' };
         req.params = { list: 'TestList' };
-        const user = req.user as User.UserClass;
+        const user = req.user as User;
         await user.createList('TestList');
         await renameList(req, res, next);
         expect(res.status).lastCalledWith(200);

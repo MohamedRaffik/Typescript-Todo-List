@@ -1,15 +1,13 @@
-import * as express from 'express';
-import * as Context from '../context';
-import * as Auth from './auth';
-import * as List from './list';
+import express from 'express';
+import { Context } from '../context';
+import { Router as AuthRouter } from './auth';
+import { Router as ListRouter } from './list';
 
-export default (context: Context.Context) => {
+export const API = (context: Context) => {
     const APIRouter = express.Router();
-    const AuthRouter = Auth.Router(context);
-    const ListRouter = List.Router(context);
 
-    APIRouter.use('/auth', AuthRouter);
-    APIRouter.use('/list', ListRouter);
+    APIRouter.use('/auth', AuthRouter(context));
+    APIRouter.use('/list', ListRouter(context));
 
     return APIRouter;
 };

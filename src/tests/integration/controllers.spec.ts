@@ -1,13 +1,26 @@
-import * as http from 'http';
-import * as supertest from 'supertest';
-import * as app from '../../app';
-import * as Context from '../../context';
-import * as utils from './utils';
+import http from 'http';
+import supertest from 'supertest';
+import { start } from '../../app';
+import { Context } from '../../context';
+import {
+    createUser,
+    clearList,
+    createList,
+    loginUser,
+    getList,
+    getLists,
+    addTodo,
+    deleteTodo,
+    deleteList,
+    moveTodo,
+    updateTodo,
+    renameList
+} from './utils';
 
 describe('Integration Testing Endpoints', () => {
     let server: supertest.SuperTest<supertest.Test>;
     let httpServer: http.Server;
-    let context: Context.Context;
+    let context: Context;
     const user = {
         email: 'inttestemail@gmail.com',
         username: 'Johnny',
@@ -15,7 +28,7 @@ describe('Integration Testing Endpoints', () => {
     };
 
     beforeAll(async () => {
-        const a = await app.start();
+        const a = await start();
         server = supertest.agent(a[0]);
         httpServer = a[0];
         context = a[1];
@@ -39,15 +52,15 @@ describe('Integration Testing Endpoints', () => {
 
     describe('/auth', () => {
         it('should POST Register at /register', async () => {
-            const response = await utils.createUser(server);
+            const response = await createUser(server);
             expect(JSON.parse(response.text)).toEqual({
                 token: expect.any(String)
             });
         });
 
         it('should POST Login at /login', async () => {
-            await utils.createUser(server, user);
-            const response = await utils.loginUser(server, {
+            await createUser(server, user);
+            const response = await loginUser(server, {
                 email: user.email,
                 password: user.password
             });
@@ -62,7 +75,7 @@ describe('Integration Testing Endpoints', () => {
         const time = Date.now();
 
         beforeAll(async () => {
-            const loginResponse = await utils.loginUser(server, {
+            const loginResponse = await loginUser(server, {
                 email: user.email,
                 password: user.password
             });
@@ -73,23 +86,23 @@ describe('Integration Testing Endpoints', () => {
         });
 
         it('should GET getLists at /', async () => {
-            const response = await utils.getLists(server, token);
+            const response = await getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
                 Main: []
             });
         });
 
         it('should GET getList at /:list/:page', async () => {
-            const response = await utils.getList(server, 'Main', 1, token);
+            const response = await getList(server, 'Main', 1, token);
             expect(JSON.parse(response.text)).toEqual({
                 Main: []
             });
         });
 
         it('should POST createList at /:list', async () => {
-            await utils.createList(server, 'Events', token);
-            await utils.createList(server, 'Appointments', token);
-            const response = await utils.getLists(server, token);
+            await createList(server, 'Events', token);
+            await createList(server, 'Appointments', token);
+            const response = await getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
                 Main: [],
                 Events: [],
@@ -98,7 +111,7 @@ describe('Integration Testing Endpoints', () => {
         });
 
         it('should POST addTodo at /:list/add ', async () => {
-            const response = await utils.addTodo(
+            const response = await addTodo(
                 server,
                 'Events',
                 {
@@ -121,7 +134,7 @@ describe('Integration Testing Endpoints', () => {
         });
 
         it('should POST moveTodo at /:list/move/:id', async () => {
-            const response = await utils.moveTodo(
+            const response = await moveTodo(
                 server,
                 { list: 'Events', id: 0 },
                 { newList: 'Appointments' },
@@ -140,8 +153,8 @@ describe('Integration Testing Endpoints', () => {
         });
 
         it('should POST renameList at /:list/rename', async () => {
-            await utils.renameList(server, 'Appointments', { newListName: 'Doctor' }, token);
-            const response = await utils.getLists(server, token);
+            await renameList(server, 'Appointments', { newListName: 'Doctor' }, token);
+            const response = await getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
                 Main: [],
                 Events: [],
@@ -157,7 +170,7 @@ describe('Integration Testing Endpoints', () => {
         });
 
         it('should PUT updateTodo at /:list/update/:id', async () => {
-            const response = await utils.updateTodo(
+            const response = await updateTodo(
                 server,
                 'Doctor',
                 0,
@@ -177,8 +190,8 @@ describe('Integration Testing Endpoints', () => {
         });
 
         it('should DELETE deleteList at /:list/delete', async () => {
-            await utils.deleteList(server, 'Events', token);
-            const response = await utils.getLists(server, token);
+            await deleteList(server, 'Events', token);
+            const response = await getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
                 Main: [],
                 Doctor: [
@@ -193,7 +206,7 @@ describe('Integration Testing Endpoints', () => {
         });
 
         it('should DELETE deleteTodo at /:list/delete/:id', async () => {
-            await utils.addTodo(
+            await addTodo(
                 server,
                 'Main',
                 {
@@ -203,8 +216,8 @@ describe('Integration Testing Endpoints', () => {
                 },
                 token
             );
-            await utils.deleteTodo(server, 'Main', 0, token);
-            const response = await utils.getLists(server, token);
+            await deleteTodo(server, 'Main', 0, token);
+            const response = await getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
                 Main: [],
                 Doctor: [
@@ -219,8 +232,8 @@ describe('Integration Testing Endpoints', () => {
         });
 
         it('should DELETE clearList at /:list/update', async () => {
-            await utils.clearList(server, 'Doctor', token);
-            const response = await utils.getLists(server, token);
+            await clearList(server, 'Doctor', token);
+            const response = await getLists(server, token);
             expect(JSON.parse(response.text)).toEqual({
                 Main: [],
                 Doctor: []

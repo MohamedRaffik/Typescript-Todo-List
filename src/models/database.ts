@@ -1,4 +1,4 @@
-import * as mongodb from 'mongodb';
+import mongodb from 'mongodb';
 
 export const connect = async () => {
     const client = await mongodb.MongoClient.connect(String(process.env.MONGODB_URI), {
