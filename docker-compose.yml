@@ -1,0 +1,7 @@
+version: '3'
+services:
+    mongo:
+        image: mongo
+        container_name: TodoListMongo
+        ports:
+            - 27017:27017

@@ -1,12 +1,13 @@
 {
     "extends": [
         "tslint:recommended",
-        "tslint-eslint-rules",
-        "tslint-config-prettier",
-        "tslint-plugin-prettier"
+        "tslint-eslint-rules"
     ],
     "rules": {
-        "interface-name": [true, "never-prefix"],
+        "interface-name": [
+            true,
+            "never-prefix"
+        ],
         "max-classes-per-file": false,
         "no-arg": true,
         "no-bitwise": true,
@@ -14,7 +15,14 @@
         "no-consecutive-blank-lines": false,
         "no-console": {
             "severity": "warning",
-            "options": ["debug", "info", "log", "time", "timeEnd", "trace"]
+            "options": [
+                "debug",
+                "info",
+                "log",
+                "time",
+                "timeEnd",
+                "trace"
+            ]
         },
         "no-string-literal": false,
         "object-literal-sort-keys": false,
