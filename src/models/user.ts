@@ -44,7 +44,7 @@ export class User {
         }
         const { _id, ...info } = doc;
         return new User(db, { email: _id, ...info });
-    };
+    }
 
     public static create = async (db: mongodb.Db, info: UserInfo) => {
         if (info.password.length <= 8) {
@@ -56,7 +56,7 @@ export class User {
         delete userInfo.db;
         await db.collection('Users').insertOne({ _id: email, ...userInfo });
         return user;
-    };
+    }
 
     public email: string;
     public username: string;
@@ -96,7 +96,7 @@ export class User {
     public async updateTodo(list: string, id: number, update: UpdateTodo) {
         this.validOperation(list, id);
         const [todo] = this.lists[list].splice(id, 1);
-        Object.keys(update).forEach(key => {
+        Object.keys(update).forEach((key) => {
             if (update[key] !== undefined) {
                 todo[key] = update[key];
             }
@@ -135,7 +135,7 @@ export class User {
     public async deleteList(list: string) {
         this.validOperation(list);
         if (list === 'Main') {
-            throw Error("Cannot delete 'Main' list");
+            throw Error('Cannot delete \'Main\' list');
         }
         delete this.lists[list];
         await this.update({ lists: this.lists });
@@ -150,7 +150,7 @@ export class User {
     public async renameList(list: string, newList: string) {
         this.validOperation(list);
         if (list === 'Main') {
-            throw Error("Cannot rename 'Main' list");
+            throw Error('Cannot rename \'Main\' list');
         }
         if (newList in this.lists) {
             throw Error(

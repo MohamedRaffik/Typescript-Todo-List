@@ -16,7 +16,7 @@ export const controller = (context: Context) => {
             'reminder' in body ? validateFields(body, { reminder: { type: 'number' } }) : '',
             'deadline' in body ? validateFields(body, { deadline: { type: 'number' } }) : '',
             'notes' in body ? validateArray(body.notes as any[], { type: 'string' }) : ''
-        ].filter(err => err);
+        ].filter((err) => err);
         if (error.length !== 0) {
             return res.status(400).json({ error: error.join(', ') });
         }

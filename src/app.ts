@@ -8,8 +8,8 @@ import { API } from './routes';
 const PORT = process.env.PORT || 5000;
 
 export const start = async (): Promise<[http.Server, Context]> => {
-    const app = express()
-    const context = await createContext()
+    const app = express();
+    const context = await createContext();
 
     app.use(express.json());
     app.use(compression());

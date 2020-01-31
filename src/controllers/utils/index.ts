@@ -5,7 +5,7 @@ export const validateFields = (
     }
 ): string => {
     const error: string[] = [];
-    Object.entries(fields).forEach(value => {
+    Object.entries(fields).forEach((value) => {
         const [field, info] = value;
         const errorLength = error.length;
         if (!(field in object)) {
@@ -41,7 +41,7 @@ export const validateArray = (
     info: { type: 'string' | 'number' | 'boolean'; enum?: Set<any>; removeDuplicates?: boolean }
 ) => {
     const error: string[] = [];
-    array.forEach(value => {
+    array.forEach((value) => {
         if (typeof value !== info.type) {
             if (error.length === 0) {
                 error.push(`Values of '[ ${array.join(', ')} ]' must be of type '${info.type}'`);
