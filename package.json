@@ -15,7 +15,7 @@
     "license": "ISC",
     "husky": {
         "hooks": {
-            "pre-commit": "tslint -p '.'",
+            "pre-commit": "tslint --fix '.'",
             "pre-push": "npm test"
         }
     },

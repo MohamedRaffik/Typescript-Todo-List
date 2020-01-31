@@ -26,7 +26,6 @@
         },
         "no-string-literal": false,
         "object-literal-sort-keys": false,
-        "only-arrow-functions": false,
-        "prettier": true
+        "only-arrow-functions": false
     }
 }
