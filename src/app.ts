@@ -20,7 +20,7 @@ export const start = async (): Promise<[http.Server, Context]> => {
         res.json({ message: 'Hello from Todo List API' });
     });
 
-    return await new Promise(resolve => {
+    return await new Promise((resolve) => {
         const httpServer = app.listen(PORT, () => {
             httpServer.on('close', async () => await context.client.close());
             resolve([httpServer, context]);
