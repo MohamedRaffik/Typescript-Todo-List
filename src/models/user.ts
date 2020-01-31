@@ -42,8 +42,8 @@ export class User {
         if (!doc) {
             return undefined;
         }
-        const { _id, ...info } = doc
-        return new User(db, { email: _id, ...info })
+        const { _id, ...info } = doc;
+        return new User(db, { email: _id, ...info });
     };
 
     public static create = async (db: mongodb.Db, info: UserInfo) => {
