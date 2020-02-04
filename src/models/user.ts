@@ -193,7 +193,7 @@ export class User {
             throw Error(`'${list}' list has reached its Todo Item limit`);
         }
         if (todo.notes.length > 10) {
-            throw Error('Todo Item must have less than or equal to 10 notes');
+            throw Error('Todo Item must have less than or equal to 10 note entries');
         }
     }
 
